@@ -94,48 +94,34 @@
             <p class="subtitle"><span class="gradient-text">Mar 22: Morning @ ASPLOS'26</span></p>
 
             <div class="text-block">
-              <p>Current trajectory of AI systems prioritizes computational performance at scale, often relegating
-                data privacy to an afterthought. This approach is unsustainable. The imminent rise of personalized
-                agents, embodied AI, and sensitive applications like healthcare transforms privacy from a mere
-                compliance feature into a fundamental requirement for earning user trust and ensuring market viability.
-                This creates a critical bottleneck for current systems: <strong>how do we secure AI of tomorrow using
-                  the non-encrypted infrastructure and emerging dedicated accelerators that we have today?</strong></p>
+              <p>Artificial Intelligence (AI) is driving a new industrial revolution, transforming how we create,
+                exchange, and safeguard information. From chatbots and autonomous vehicles to enterprise assistants and
+                AI coders, human workflows are increasingly translated into digital tokens—a process that <strong>makes
+                  the world effectively tokenized</strong>. Yet this transformation exposes sensitive data at an
+                unprecedented scale, making privacy preservation a defining challenge of the AI era. Current privacy
+                solutions, however, remain prohibitively expensive. Software-based encryption can slow computation by
+                100–10,000×, while hardware isolation demands millions of dollar fabrication costs. These barriers make
+                privacy protection over prohibitive, leaving the broader AI revolution unprotected. This tutorial gives
+                you a tour of the state-of-the-art in cryptography primitives acceleration, and how to make privacy
+                protection as efficient and accessible as unprotected AI. </p>
 
-              <p>Homomorphic Encryption (HE) and Zero-Knowledge Proofs (ZKP) offer two complementary paradigms that
-                enable computation and verification over encrypted data and models, providing end-to-end confidentiality
-                and integrity on AI systems. These techniques promise two transformative outcomes:</p>
+              <p>In this tutorial, you will learn:</p>
               <ul>
-                <li><strong>(a)</strong> Immediate augmentation of existing AI systems with holistic privacy protection
-                  without hardware changes.</li>
-                <li><strong>(b)</strong> Guidance on the design of future reconfigurable AI systems that can adapt
-                  itself to efficiently serve both full-spectrum PPML and standard ML.</li>
+                <li><strong>(a)</strong> How to convert an AI model into Homomorphic Encryption (HE), enabling
+                  privacy-preserving AI inference, and how to make a compiler to do so?</li>
+                <li><strong>(b)</strong> How to deploy HE on TPU hardware to achieve SotA throughput and energy
+                  efficiency?</li>
+                <li><strong>(c)</strong> How to further extend HE to arbitrary-precision cryptography primitives,
+                  enabling Zero-Knowledge Proofs (ZKPs)?</li>
+                <li><strong>(d)</strong> How to write high-performance JAX kernels, optimize them to run on distributed
+                  TPUs?</li>
               </ul>
-
-              <p>However, deploying HE and ZKP in practice faces steep barriers — notably, orders-of-magnitude increases
-                in computation and memory cost, and accuracy loss from polynomial approximations and floating point
-                quantization.</p>
-
-              <p>Existing optimizations have spanned three pillars:</p>
-              <ol>
-                <li><strong>Efficient Model Architecture</strong> with redesigned AI operators to minimize
-                  non-polynomial computation under encryption.</li>
-                <li><strong>Compilation</strong> that lowers high-precision modular cryptographic operators across
-                  privacy tiers into low-precision kernels efficient on today’s hardware or dedicated accelerators.</li>
-                <li><strong>Hardware</strong> that reconfigures itself to efficiently process computation of various
-                  shapes and flexible memory reorganizations in HE or optimizes arithmetic and memory organization
-                  particularly suited to FHE applications.</li>
-              </ol>
-
-              <p>This tutorial will guide the ASPLOS community through these advances, offering a unified view across
-                the model–compiler–hardware co-design stack for privacy-preserving AI. Through real system
-                demonstrations and open-source examples, we will highlight practical techniques, quantify trade-offs,
-                and chart future research directions toward making cryptographically secure AI both efficient and
-                deployable.</p>
             </div>
             <!-- Overarching figure placeholder -->
             <div class="figure-placeholder">
               <img src="fig/cross_overview.png" alt="Overarching Figure of the Repository" class="repo-figure">
-              <p class="caption">Figure 1: Unified view across model–compiler–hardware co-design stack.</p>
+              <p class="caption">Figure 1: CPA tutorial overview, turning TPU as a crypto accelerator, achieving SoTA
+                throughput and energy efficiency.</p>
             </div>
           </section>
 
@@ -143,6 +129,10 @@
           <section id="resources">
             <h2>CPA Resources</h2>
             <div class="resources-grid">
+              <a href="https://github.com/EfficientPPML/CROSS" target="_blank" class="resource-card">
+                <h3>HE TPU acceleration</h3>
+                <p>CROSS: Library of enabling Google TPU for accelerating HE.</p>
+              </a>
               <a href="https://github.com/google/heir" target="_blank" class="resource-card">
                 <h3>HEIR repository</h3>
                 <p>Google's MLIR-based compiler toolchain for HE.</p>
@@ -151,13 +141,9 @@
                 <h3>Efficient model approx.</h3>
                 <p>SmartPAF: Repository for efficient model approximation.</p>
               </a>
-              <a href="https://github.com/EfficientPPML/CROSS" target="_blank" class="resource-card">
-                <h3>HE TPU acceleration</h3>
-                <p>CROSS: Library of enabling Google TPU for accelerating HE.</p>
-              </a>
               <a href="https://github.com/EfficientPPML/PROVE" target="_blank" class="resource-card">
                 <h3>ZKP TPU acceleration</h3>
-                <p>MORPH: Library of enabling TPUs for ZKP (arbitrary-precision MSM and NTT).</p>
+                <p>MORPH: Library of enabling TPUs for ZKP (arbitrary-precision MSM and NTT, stay tuned).</p>
               </a>
               <a href="https://github.com/IntelLabs/encrypted-computing-sdk" target="_blank" class="resource-card">
                 <h3>Intel HERACLES</h3>
@@ -276,15 +262,6 @@
                   networks, distributed systems, and AI/ML accelerator systems.</p>
               </div>
 
-              <!-- Anupam Golder -->
-              <div class="organizer-card">
-                <div class="photo-placeholder"><img src="fig/anupam.jpeg" alt="Anupam Golder"></div>
-                <h3>Anupam Golder</h3>
-                <p class="affiliation">Intel Corporation</p>
-                <p class="bio">Research scientist at Intel CRL developing ASIC microarchitectures for cryptographic
-                  accelerators like FHE.</p>
-              </div>
-
               <!-- Jeremy Kun -->
               <div class="organizer-card">
                 <div class="photo-placeholder"><img src="fig/jeremy.jpg" alt="Jeremy Kun"></div>
@@ -294,6 +271,24 @@
                   Introduction to Mathematics".</p>
               </div>
 
+              <!-- Anupam Golder -->
+              <div class="organizer-card">
+                <div class="photo-placeholder"><img src="fig/anupam.jpeg" alt="Anupam Golder"></div>
+                <h3>Anupam Golder</h3>
+                <p class="affiliation">Intel Corporation</p>
+                <p class="bio">Research scientist at Intel CRL developing ASIC microarchitectures for cryptographic
+                  accelerators like FHE.</p>
+              </div>
+
+              <!-- Jingtian Dang -->
+              <div class="organizer-card">
+                <div class="photo-placeholder"><img src="fig/jingtian.jpeg" alt="Jingtian Dang"></div>
+                <h3>Jingtian Dang</h3>
+                <p class="affiliation">Georgia Institute of Technology</p>
+                <p class="bio">2nd-year PhD student. Leads the project to map ZKP primitives onto
+                  Google TPUs.</p>
+              </div>
+
               <!-- Shruthi Gorantala -->
               <div class="organizer-card">
                 <div class="photo-placeholder"><img src="fig/shruthi.jpeg" alt="Shruthi Gorantala"></div>
@@ -301,15 +296,6 @@
                 <p class="affiliation">Google</p>
                 <p class="bio">Co-founder and lead for FHE team at Google. Driving standardization of FHE benchmarking.
                 </p>
-              </div>
-
-              <!-- Simon Langowski -->
-              <div class="organizer-card">
-                <div class="photo-placeholder"><img src="fig/simon.png" alt="Simon Langowski"></div>
-                <h3>Simon Langowski</h3>
-                <p class="affiliation">MIT</p>
-                <p class="bio">PhD student at MIT working on cryptography for systems to innovate efficient algorithms
-                  for crypto workloads.</p>
               </div>
 
               <!-- Asra Ali -->
@@ -330,14 +316,15 @@
                   UC San Diego.</p>
               </div>
 
-              <!-- Jingtian Dang -->
+              <!-- Simon Langowski -->
               <div class="organizer-card">
-                <div class="photo-placeholder"><img src="fig/jingtian.jpeg" alt="Jingtian Dang"></div>
-                <h3>Jingtian Dang</h3>
-                <p class="affiliation">Georgia Institute of Technology</p>
-                <p class="bio">2nd-year PhD student. Leads the project to map ZKP primitives onto
-                  Google TPUs.</p>
+                <div class="photo-placeholder"><img src="fig/simon.png" alt="Simon Langowski"></div>
+                <h3>Simon Langowski</h3>
+                <p class="affiliation">MIT</p>
+                <p class="bio">PhD student at MIT working on cryptography for systems to innovate efficient algorithms
+                  for crypto workloads.</p>
               </div>
+
             </div>
           </section>
 
