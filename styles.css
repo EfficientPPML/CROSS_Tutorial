@@ -460,6 +460,9 @@ section:last-child {
   text-align: center;
   transition: transform 0.2s;
   height: 100%;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .organizer-card:hover {
