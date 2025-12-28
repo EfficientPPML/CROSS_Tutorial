@@ -631,19 +631,38 @@ section:last-child {
 }
 
 /* Organizer Photos */
+.photo-placeholder {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--bg-sidebar), var(--border-color));
+  margin: 0 auto 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 4px solid var(--bg-card);
+  box-shadow: var(--shadow-md), 0 0 0 2px var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.photo-placeholder:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg), 0 0 0 2px var(--primary-color);
+}
+
 .photo-placeholder img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
 }
 
 /* Sponsors Section */
 .sponsors-section {
-  padding: 40px 0;
+  padding: 60px 0;
   border-top: 1px solid var(--border-color);
   background-color: var(--bg-sidebar);
-  /* Use sidebar bg for slight contrast */
 }
 
 .sponsors-container {
@@ -652,33 +671,36 @@ section:last-child {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 60px;
+  gap: 40px;
   flex-wrap: wrap;
   padding: 0 20px;
 }
 
 .sponsor-logo {
-  height: 60px;
-  /* Base height constraint */
+  height: 80px;
   width: auto;
   object-fit: contain;
-  filter: grayscale(100%);
-  opacity: 0.7;
+  /* Removed grayscale to make them colorful by default */
+  opacity: 0.9;
   transition: all 0.3s ease;
 }
 
+/* User requested same height, so removing specific overrides */
+/* .sponsor-logo[alt*="Georgia Tech"] ... */
+
 .sponsor-logo:hover {
-  filter: grayscale(0%);
   opacity: 1;
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 /* Adjustments for dark mode brightness if needed */
 [data-theme="dark"] .sponsor-logo {
-  filter: grayscale(100%) brightness(1.5);
-  /* Make them a bit brighter in dark mode */
+  /* Keep colors but ensure visibility */
+  filter: brightness(1.2);
+  opacity: 0.9;
 }
 
 [data-theme="dark"] .sponsor-logo:hover {
-  filter: grayscale(0%) brightness(1.2);
+  filter: brightness(1.3);
+  opacity: 1;
 }
