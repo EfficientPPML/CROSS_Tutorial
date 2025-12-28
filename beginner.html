@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beginner's Guide - Privacy-Preserving AI Computing</title>
+  <meta name="description" content="Beginner's guide to Privacy-Preserving AI Computing.">
+
+  <!-- Google Fonts: Inter & Outfit for a more modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">CPA TUTORIAL</div>
+        <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- New Sections -->
+        <div class="nav-section">
+          <h3 class="nav-title">tutorial</h3>
+          <ul class="nav-links">
+            <li><a href="index.html">ASPLOS'26@Pittsburgh</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">docs</h3>
+          <ul class="nav-links">
+            <li><a href="beginner.html" class="active">beginner</a></li>
+          </ul>
+        </div>
+
+
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <div class="header-title">Beginner Guide</div>
+
+        <div class="top-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <article class="doc-content">
+
+          <section id="introduction">
+            <h2>Introduction to CPA</h2>
+            <p>Welcome to the beginner's guide for Privacy-Preserving AI Computing (CPA). This section introduces how
+              the system works.</p>
+            <p>[Placeholder for detailed introduction content]</p>
+          </section>
+
+          <section id="terminology">
+            <h2>Terminology</h2>
+            <p>Here are some common terms you will encounter:</p>
+            <ul>
+              <li><strong>HE</strong>: Homomorphic Encryption</li>
+              <li><strong>ZKP</strong>: Zero-Knowledge Proofs</li>
+              <li><strong>TPU</strong>: Tensor Processing Unit</li>
+            </ul>
+            <p>[Placeholder for more terminology]</p>
+          </section>
+
+          <section id="setup">
+            <h2>Setup Guide</h2>
+            <p>Follow these steps to set up your environment:</p>
+            <pre><code># Example setup command
+pip install cross-lib</code></pre>
+            <p>[Placeholder for setup instructions]</p>
+          </section>
+
+        </article>
+
+        <aside class="on-this-page">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#terminology">Terminology</a></li>
+            <li><a href="#setup">Setup</a></li>
+          </ul>
+        </aside>
+      </div>
+
+      <footer class="site-footer">
+        <p>&copy; 2026 Cryptography Primitives Acceleration Tutorial.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
