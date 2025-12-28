@@ -1,144 +1,367 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutorial | Getting Started</title>
-    <meta name="description" content="A premium tutorial site hosted on GitHub Pages.">
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy-Preserving AI Computing Tutorial</title>
+  <meta name="description" content="ASPLOS Tutorial on Privacy-Preserving AI Computing via HE and ZKP.">
+
+  <!-- Google Fonts: Inter & Outfit for a more modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-    <div class="app-layout">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">TUTORIAL</div>
-                <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <h3 class="nav-title">Introduction</h3>
-                    <ul class="nav-links">
-                        <li><a href="#welcome" class="active">Welcome</a></li>
-                        <li><a href="#installation">Installation</a></li>
-                        <li><a href="#quickstart">Quick Start</a></li>
-                    </ul>
-                </div>
-                
-                <div class="nav-section">
-                    <h3 class="nav-title">Core Concepts</h3>
-                    <ul class="nav-links">
-                        <li><a href="#architecture">Architecture</a></li>
-                        <li><a href="#components">Components</a></li>
-                        <li><a href="#routing">Routing</a></li>
-                    </ul>
-                </div>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">CPA TUTORIAL</div>
+        <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
 
-                <div class="nav-section">
-                    <h3 class="nav-title">Advanced</h3>
-                    <ul class="nav-links">
-                        <li><a href="#deployment">Deployment</a></li>
-                        <li><a href="#configuration">Configuration</a></li>
-                    </ul>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <h3 class="nav-title">Overview</h3>
+          <ul class="nav-links">
+            <li><a href="#abstract" class="active">Abstract</a></li>
+            <li><a href="#resources">Resources</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">Program</h3>
+          <ul class="nav-links">
+            <li><a href="#schedule">Schedule</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">People</h3>
+          <ul class="nav-links">
+            <li><a href="#organizers">Organizers</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <div class="header-title">ASPLOS 2025 Tutorial</div>
+
+        <div class="top-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <article class="doc-content">
+
+          <!-- Hero / Abstract Section -->
+          <section id="abstract" class="hero-section">
+            <h1>Cryptography Primitives Acceleration (CPA Tutorial)</h1>
+            <p class="subtitle"><span class="gradient-text">Mar 22: Morning @ ASPLOS'26</span></p>
+
+            <div class="text-block">
+              <p>Current trajectory of AI systems prioritizes computational performance at scale, often relegating
+                data privacy to an afterthought. This approach is unsustainable. The imminent rise of personalized
+                agents, embodied AI, and sensitive applications like healthcare transforms privacy from a mere
+                compliance feature into a fundamental requirement for earning user trust and ensuring market viability.
+                This creates a critical bottleneck for current systems: <strong>how do we secure AI of tomorrow using
+                  the non-encrypted infrastructure and emerging dedicated accelerators that we have today?</strong></p>
+
+              <p>Homomorphic Encryption (HE) and Zero-Knowledge Proofs (ZKP) offer two complementary paradigms that
+                enable computation and verification over encrypted data and models, providing end-to-end confidentiality
+                and integrity on AI systems. These techniques promise two transformative outcomes:</p>
+              <ul>
+                <li><strong>(a)</strong> Immediate augmentation of existing AI systems with holistic privacy protection
+                  without hardware changes.</li>
+                <li><strong>(b)</strong> Guidance on the design of future reconfigurable AI systems that can adapt
+                  itself to efficiently serve both full-spectrum PPML and standard ML.</li>
+              </ul>
+
+              <p>However, deploying HE and ZKP in practice faces steep barriers — notably, orders-of-magnitude increases
+                in computation and memory cost, and accuracy loss from polynomial approximations and floating point
+                quantization.</p>
+
+              <p>Existing optimizations have spanned three pillars:</p>
+              <ol>
+                <li><strong>Efficient Model Architecture</strong> with redesigned AI operators to minimize
+                  non-polynomial computation under encryption.</li>
+                <li><strong>Compilation</strong> that lowers high-precision modular cryptographic operators across
+                  privacy tiers into low-precision kernels efficient on today’s hardware or dedicated accelerators.</li>
+                <li><strong>Hardware</strong> that reconfigures itself to efficiently process computation of various
+                  shapes and flexible memory reorganizations in HE or optimizes arithmetic and memory organization
+                  particularly suited to FHE applications.</li>
+              </ol>
+
+              <p>This tutorial will guide the ASPLOS community through these advances, offering a unified view across
+                the model–compiler–hardware co-design stack for privacy-preserving AI. Through real system
+                demonstrations and open-source examples, we will highlight practical techniques, quantify trade-offs,
+                and chart future research directions toward making cryptographically secure AI both efficient and
+                deployable.</p>
+            </div>
+            <!-- Overarching figure placeholder -->
+            <div class="figure-placeholder">
+              <img src="figure_drawer/cross_overview.png" alt="Overarching Figure of the Repository"
+                class="repo-figure">
+              <p class="caption">Figure 1: Unified view across model–compiler–hardware co-design stack.</p>
+            </div>
+          </section>
+
+          <!-- Resources Section -->
+          <section id="resources">
+            <h2>CPA Resources</h2>
+            <div class="resources-grid">
+              <a href="https://github.com/google/heir" target="_blank" class="resource-card">
+                <h3>HEIR repository</h3>
+                <p>Google's MLIR-based compiler toolchain for HE.</p>
+              </a>
+              <a href="https://github.com/EfficientPPML/SmartPAF" target="_blank" class="resource-card">
+                <h3>Efficient model approx.</h3>
+                <p>SmartPAF: Repository for efficient model approximation.</p>
+              </a>
+              <a href="https://github.com/EfficientPPML/CROSS" target="_blank" class="resource-card">
+                <h3>HE TPU acceleration</h3>
+                <p>CROSS: Library of enabling Google TPU for accelerating HE.</p>
+              </a>
+              <a href="https://github.com/EfficientPPML/PROVE" target="_blank" class="resource-card">
+                <h3>ZKP TPU acceleration</h3>
+                <p>MORPH: Library of enabling TPUs for ZKP (arbitrary-precision MSM and NTT).</p>
+              </a>
+              <a href="https://github.com/IntelLabs/encrypted-computing-sdk" target="_blank" class="resource-card">
+                <h3>Intel HERACLES</h3>
+                <p>Encrypted Computing SDK repository.</p>
+              </a>
+            </div>
+          </section>
+
+          <!-- Schedule Section -->
+          <section id="schedule">
+            <h2>Agenda (Mar 22, 2026, ASPLOS'26)</h2>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="time">30 min</div>
+                <div class="content">
+                  <h3>Keynote: Privacy-Preserving AI Computing</h3>
                 </div>
-            </nav>
+              </div>
+              <div class="timeline-item">
+                <div class="time">30 min</div>
+                <div class="content">
+                  <h3>Introduction to Verifiable Privacy-preserving AI via HE and ZKP</h3>
+                  <p>Memory, Computation and Accuracy overhead of Cryptography primitives (HE and ZKP). Overview of
+                    existing HE acceleration techniques (Google TPU, AWS Trainium, Meta MTIA).</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="time">30 min</div>
+                <div class="content">
+                  <h3>Model – Encrypt Model with better Performance / less Accuracy Degradation</h3>
+                  <ul>
+                    <li>Overview of components for compiling ML models</li>
+                    <li><strong>Hands on:</strong> Model rearchitecture</li>
+                    <li><strong>Hands on:</strong> Arithmetization (polynomial approximation, packing/kernel selection)
+                    </li>
+                    <li><strong>Hands on:</strong> Scheme selection, noise analysis, ciphertext management</li>
+                    <li><strong>Hands on:</strong> Accuracy degradation considerations</li>
+                    <li><strong>Hands on:</strong> Differences among schemes (CGGI, CKKS/BGV/BFV)</li>
+                    <li><strong>Hands on:</strong> Life cycle of model compilation using CKKS</li>
+                    <li><strong>Hands on:</strong> Export to jaxite (CROSS)</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline-break">
+                <span>Break (30 min)</span>
+              </div>
+              <div class="timeline-item">
+                <div class="time">30 min</div>
+                <div class="content">
+                  <h3>Compiler – CROSS: Google TPU for Homomorphic Encryption</h3>
+                  <p>TPU-specific Memory and Compute Optimizations for HE.</p>
+                  <ul>
+                    <li><strong>Hands on:</strong> Encode, Encryption, Decryption, Decode</li>
+                    <li><strong>Hands on:</strong> HE Kernels (HEAdd, HEMul, HERotation, HERescale, NTT, Keyswitch)</li>
+                    <li><strong>Hands on:</strong> Parameter Selection (32-bit logq, extended via rescaling)</li>
+                    <li><strong>Hands on:</strong> MNIST inference benchmark</li>
+                    <li><strong>Hands on:</strong> Similarity search benchmark</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="time">20 min</div>
+                <div class="content">
+                  <h3>Compiler – PROVE: Google TPU for ZKP</h3>
+                  <p>TPU-specific Memory and Compute Optimizations for Multi-scalar Multiplication.</p>
+                  <ul>
+                    <li><strong>Hands on:</strong> Efficient Modular Reduction and Multiplication for Big Integers (>256
+                      bits)</li>
+                    <li><strong>Hands on:</strong> Different dataflow choices (Bucket-level, Window-level, Hybrid
+                      parallelism)</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="time">30~50 min</div>
+                <div class="content">
+                  <h3>Hardware – Intel’s FHE Accelerator ASIC HERACLES</h3>
+                  <p>High-level overview of architecture and ISA, Polynomial ISA, Memory sub-system, formatting.</p>
+                  <ul>
+                    <li><strong>Hands on:</strong> Kernel generation using Encrypted Computing SDK</li>
+                    <li><strong>Hands on:</strong> Simulation of functional correctness and performance estimation</li>
+                    <li><strong>Hands on:</strong> All basic FHE operations and MNIST inference benchmark</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="time">5 min</div>
+                <div class="content">
+                  <h3>Future Work / Discussion / Call for action</h3>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Organizers Section -->
+          <section id="organizers">
+            <h2>Organizers</h2>
+            <div class="organizers-grid">
+              <!-- Jianming Tong -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="JT">
+                  <!-- Add photo here: <img src="jianming_tong.jpg" alt="Jianming Tong"> -->
+                </div>
+                <h3>Jianming Tong</h3>
+                <p class="affiliation">Georgia Institute of Technology</p>
+                <p class="bio">5th-year PhD candidate focusing on full-stack optimizations for efficient and private AI.
+                  Developer of CROSS compiler and model approximation frameworks.</p>
+              </div>
+
+              <!-- Dr. Tushar Krishna -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="TK"></div>
+                <h3>Dr. Tushar Krishna</h3>
+                <p class="affiliation">Georgia Institute of Technology</p>
+                <p class="bio">Associate Professor in ECE. Research spans computer architecture, interconnection
+                  networks, and AI/ML accelerator systems.</p>
+              </div>
+
+              <!-- Dr. Anupam Golder -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="AG"></div>
+                <h3>Dr. Anupam Golder</h3>
+                <p class="affiliation">Intel Corporation</p>
+                <p class="bio">Research scientist at Intel CRL developing ASIC microarchitectures for cryptographic
+                  accelerators like FHE.</p>
+              </div>
+
+              <!-- Dr. Jeremy Kun -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="JK"></div>
+                <h3>Dr. Jeremy Kun</h3>
+                <p class="affiliation">Google</p>
+                <p class="bio">Staff software engineer and tech lead on HEIR compiler. Author of "A Programmer's
+                  Introduction to Mathematics".</p>
+              </div>
+
+              <!-- Shruthi Gorantala -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="SG"></div>
+                <h3>Shruthi Gorantala</h3>
+                <p class="affiliation">Google</p>
+                <p class="bio">Co-founder and lead for FHE team at Google. Driving standardization of FHE benchmarking.
+                </p>
+              </div>
+
+              <!-- Simon Langowski -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="SL"></div>
+                <h3>Simon Langowski</h3>
+                <p class="affiliation">MIT</p>
+                <p class="bio">PhD student at MIT working on cryptography for systems to innovate efficient algorithms
+                  for crypto workloads.</p>
+              </div>
+
+              <!-- Asra Ali -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="AA"></div>
+                <h3>Asra Ali</h3>
+                <p class="affiliation">Google</p>
+                <p class="bio">Software Engineer on Privacy, Safety, and Security. Focus on developing a transpiler for
+                  FHE.</p>
+              </div>
+
+              <!-- Dr. Baiyu Li -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="BL"></div>
+                <h3>Dr. Baiyu Li</h3>
+                <p class="affiliation">Google</p>
+                <p class="bio">Research Scientist studying lattice-based cryptography and secure computation. PhD from
+                  UC San Diego.</p>
+              </div>
+
+              <!-- Jingtian Dang -->
+              <div class="organizer-card">
+                <div class="photo-placeholder" data-initials="JD"></div>
+                <h3>Jingtian Dang</h3>
+                <p class="affiliation">Georgia Institute of Technology</p>
+                <p class="bio">2nd-year PhD student. Leads CROSS and PROVE projects to map HE and ZKP primitives onto
+                  Google TPUs.</p>
+              </div>
+            </div>
+          </section>
+
+        </article>
+
+        <aside class="on-this-page">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#abstract">Abstract</a></li>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+            <li><a href="#organizers">Organizers</a></li>
+          </ul>
         </aside>
+      </div>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
-            <header class="top-bar">
-                <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-                </button>
-                
-                <div class="search-bar">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                    <input type="text" placeholder="Search documentation...">
-                </div>
+      <footer class="site-footer">
+        <p>&copy; 2025 Privacy-Preserving AI Computing Tutorial.</p>
+      </footer>
+    </main>
+  </div>
 
-                <div class="top-actions">
-                    <a href="https://github.com" target="_blank" class="github-link" aria-label="GitHub">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/></svg>
-                    </a>
-                    <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
-                        <!-- Sun Icon -->
-                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        <!-- Moon Icon -->
-                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </button>
-                </div>
-            </header>
-
-            <div class="content-wrapper">
-                <article class="doc-content">
-                    <section id="welcome" class="hero-section">
-                        <h1>Welcome to <span class="gradient-text">FHE/CROSS</span></h1>
-                        <p class="lead">A comprehensive guide to understanding and implementing Fully Homomorphic Encryption with CROSS.</p>
-                        
-                        <div class="cta-buttons">
-                            <a href="#quickstart" class="btn btn-primary">Get Started</a>
-                            <a href="https://github.com" class="btn btn-secondary">View Source</a>
-                        </div>
-                    </section>
-
-                    <section id="installation">
-                        <h2>Installation</h2>
-                        <p>Get up and running with FHE/CROSS in minutes.</p>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="lang">bash</span>
-                                <button class="copy-btn">Copy</button>
-                            </div>
-                            <pre><code class="language-bash">pip install fhe-cross
-# Or clone the repository
-git clone https://github.com/example/fhe-cross.git</code></pre>
-                        </div>
-                    </section>
-
-                    <section id="quickstart">
-                        <h2>Quick Start</h2>
-                        <p>Initialize your first secure context.</p>
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="lang">python</span>
-                                <button class="copy-btn">Copy</button>
-                            </div>
-                            <pre><code>import fhe_cross as fc
-
-# Initialize context
-ctx = fc.Context(security_level=128)
-print("Context initialized")</code></pre>
-                        </div>
-                    </section>
-
-                </article>
-                
-                <aside class="on-this-page">
-                    <h4>On this page</h4>
-                    <ul>
-                        <li><a href="#welcome">Welcome</a></li>
-                        <li><a href="#installation">Installation</a></li>
-                        <li><a href="#quickstart">Quick Start</a></li>
-                    </ul>
-                </aside>
-            </div>
-            
-            <footer class="site-footer">
-                <p>&copy; 2025 FHE/CROSS Project. Built with &hearts; and Code.</p>
-            </footer>
-        </main>
-    </div>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>

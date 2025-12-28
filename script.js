@@ -68,20 +68,5 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', highlightNavigation);
 
   // --- Copy Code to Clipboard ---
-  const copyBtns = document.querySelectorAll('.copy-btn');
-
-  copyBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const codeBlock = btn.closest('.code-block');
-      const code = codeBlock.querySelector('code').innerText;
-
-      navigator.clipboard.writeText(code).then(() => {
-        const originalText = btn.innerText;
-        btn.innerText = 'Copied!';
-        setTimeout(() => {
-          btn.innerText = originalText;
-        }, 2000);
-      });
-    });
-  });
+  // (Removed as per new content requirements)
 });
