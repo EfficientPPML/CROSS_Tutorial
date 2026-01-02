@@ -43,9 +43,9 @@
         <div class="nav-section">
           <h3 class="nav-title">docs</h3>
           <ul class="nav-links">
-            <li><a href="beginner.html">beginner</a></li>
-            <li><a href="tpu.html">tpu setup</a></li>
-            <li><a href="ntt.html">NTT algorithms</a></li>
+            <li><a href="beginner.html" class="active">Easy HE Background</a></li>
+            <li><a href="tpu.html">TPU Novice to Master</a></li>
+            <li><a href="ntt.html">NTT Algorithms</a></li>
             <li><a href="open_challenge.html">Open Challenge</a></li>
           </ul>
         </div>
@@ -154,17 +154,22 @@
             <h2>Agenda (Mar 22, 2026, ASPLOS'26)</h2>
             <div class="timeline">
               <div class="timeline-item">
-                <div class="time">9:00 AM ~ 9:30 AM</div>
+                <div class="time">9:00 AM ~ 9:05 AM</div>
+                <div class="content">
+                  <h3>Welcome</h3>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="time">9:05 AM ~ 9:50 AM</div>
                 <div class="content">
                   <h3>Keynote: Privacy-Preserving AI Computing</h3>
                 </div>
               </div>
               <div class="timeline-item">
-                <div class="time">9:30 AM ~ 10:00 AM</div>
+                <div class="time">9:50 AM ~ 10:00 AM</div>
                 <div class="content">
                   <h3>Introduction to Verifiable Privacy-preserving AI via HE and ZKP</h3>
-                  <p>Memory, Computation and Accuracy overhead of Cryptography primitives (HE and ZKP). Overview of
-                    existing HE acceleration techniques (Google TPU, AWS Trainium, Meta MTIA).</p>
+                  <p>Overview of HE compilation stacks.</p>
                 </div>
               </div>
               <div class="timeline-item">
@@ -188,9 +193,10 @@
                 <span>Break (10:30 AM ~ 11:00 AM)</span>
               </div>
               <div class="timeline-item">
-                <div class="time">11:00 AM ~ 11:30 AM</div>
+                <div class="time">11:00 AM ~ 11:40 AM</div>
                 <div class="content">
                   <h3>CROSS – Enabling Google TPU for Homomorphic Encryption</h3>
+                  <p>Memory, Computation and Accuracy overhead of Cryptography primitives (HE and ZKP).</p>
                   <p>TPU-specific Memory and Compute Optimizations for HE.</p>
                   <ul>
                     <li><strong>Hands on:</strong> Encode, Encryption, Decryption, Decode</li>
@@ -202,7 +208,7 @@
                 </div>
               </div>
               <div class="timeline-item">
-                <div class="time">11:30 AM ~ 11:50 AM</div>
+                <div class="time">11:40 AM ~ 12:00 PM</div>
                 <div class="content">
                   <h3>MORPH – Enabling Google TPU for ZKP</h3>
                   <p>TPU-specific Memory and Compute Optimizations for Multi-scalar Multiplication.</p>
@@ -215,7 +221,7 @@
                 </div>
               </div>
               <div class="timeline-item">
-                <div class="time">11:50 AM ~ 12:20 PM</div>
+                <div class="time">12:00 PM ~ 12:20 PM</div>
                 <div class="content">
                   <h3>Hardware – Intel’s FHE Accelerator ASIC HERACLES</h3>
                   <p>High-level overview of architecture and ISA, Polynomial ISA, Memory sub-system, formatting.</p>
@@ -338,8 +344,7 @@
                   href="https://github.com/google/jaxite">https://github.com/google/jaxite</a></li>
               <li>Cite our paper with biblatex below:</li>
             </ul>
-            <pre><code>
-              @inproceedings{tong2025CROSS,
+            <pre><code>@inproceedings{tong2025CROSS,
 author = {Jianming Tong and Tianhao Huang and Jingtian Dang and Leo de Castro and Anirudh Itagi and Anupam
 Golder and Asra Ali and Jevin Jiang and Jeremy Kun and Arvind and G. Edward Suh and Tushar Krishna},
 title = {Leveraging ASIC AI Chips for Homomorphic Encryption},
@@ -348,19 +353,16 @@ publisher = {2026 IEEE International Symposium on High Performance Computer Arch
 address = {Australia},
 keywords = {AI ASICs, TPU, Fully Homomorphic Encryption},
 location = {Australia},
-series = {HPCA'26} }
-            </code></pre>
-            <pre><code>
-              @misc{ali2025heiruniversalcompilerhomomorphic,
-      title={HEIR: A Universal Compiler for Homomorphic Encryption}, 
-      author={Asra Ali and Jaeho Choi and Bryant Gipson and Shruthi Gorantala and Jeremy Kun and Wouter Legiest and Lawrence Lim and Alexander Viand and Meron Zerihun Demissie and Hongren Zheng},
-      year={2025},
-      eprint={2508.11095},
-      archivePrefix={arXiv},
-      primaryClass={cs.CR},
-      url={https://arxiv.org/abs/2508.11095}, 
-}
-            </code></pre>
+series = {HPCA'26} }</code></pre>
+            <pre><code>@misc{ali2025heiruniversalcompilerhomomorphic,
+title={HEIR: A Universal Compiler for Homomorphic Encryption}, 
+author={Asra Ali and Jaeho Choi and Bryant Gipson and Shruthi Gorantala and Jeremy Kun and Wouter Legiest and Lawrence Lim and Alexander Viand and Meron Zerihun Demissie and Hongren Zheng},
+year={2025},
+eprint={2508.11095},
+archivePrefix={arXiv},
+primaryClass={cs.CR},
+url={https://arxiv.org/abs/2508.11095}, 
+}</code></pre>
           </section>
 
 

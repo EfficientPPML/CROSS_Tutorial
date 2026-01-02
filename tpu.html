@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TPU Setup - Privacy-Preserving AI Computing</title>
+  <title>TPU</title>
   <meta name="description" content="Guide to setting up Google Cloud TPU for Privacy-Preserving AI.">
 
   <!-- Google Fonts: Inter & Outfit for a more modern look -->
@@ -43,9 +43,9 @@
         <div class="nav-section">
           <h3 class="nav-title">docs</h3>
           <ul class="nav-links">
-            <li><a href="beginner.html">beginner</a></li>
-            <li><a href="tpu.html" class="active">tpu setup</a></li>
-            <li><a href="ntt.html">NTT algorithms</a></li>
+            <li><a href="beginner.html" class="active">Easy HE Background</a></li>
+            <li><a href="tpu.html">TPU Novice to Master</a></li>
+            <li><a href="ntt.html">NTT Algorithms</a></li>
             <li><a href="open_challenge.html">Open Challenge</a></li>
           </ul>
         </div>
@@ -61,7 +61,7 @@
           </svg>
         </button>
 
-        <div class="header-title">TPU Setup Guide</div>
+        <div class="header-title">TPU</div>
 
         <div class="top-actions">
           <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
@@ -89,18 +89,17 @@
 
             <ul>
               <li>
-                <strong>Step 1: Create a Google Project</strong><br>
-                <a
+                <strong>Step 1: Create a Google Project</strong> at <a
                   href="https://cloud.google.com/appengine/docs/standard/nodejs/building-app/creating-project">tutorial</a>.
-                <br><br>
+                <br>
                 Obtain the name of the project as <code>&lt;google_project_name&gt;</code> and <strong>Google Project
                   ID</strong>
                 from the created project.
               </li>
 
               <li>
-                <strong>Step 2: Apply for the Tree-tier TPU trail for 30 days</strong>
-                <a href="https://sites.research.google/trc/about/">TRC</a>
+                <strong>Step 2: Apply for the Tree-tier TPU trail for 30 days</strong> at <a
+                  href="https://sites.research.google/trc/about/">TRC</a>
                 <p>Once submitted the request, an email will be shot to you within one day, where there is a link to
                   fill in a
                   survey with your <strong>Google project ID</strong>.</p>
@@ -125,11 +124,20 @@ gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --
 
                 <p><strong>For TPUv5e,</strong></p>
                 <pre><code>gcloud config set project &lt;google_project_name&gt;
-gcloud config set compute/zone us-central1-a
+gcloud config set compute/zone us-west1-c
 gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --node-id=&lt;your_favoriate_node_name&gt; \
-    --zone=us-central1-a \
+    --zone=us-west1-c \
     --accelerator-type=v5litepod-4 \
     --runtime-version=v2-alpha-tpuv5-lite \
+    --provisioning-model=spot</code></pre>
+
+                <p><strong>For TPUv5p,</strong></p>
+                <pre><code>gcloud config set project &lt;google_project_name&gt;
+gcloud config set compute/zone us-east5-a
+gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --node-id=&lt;your_favoriate_node_name&gt; \
+    --zone=us-east5-a \
+    --accelerator-type=v5p-8 \
+    --runtime-version=v2-alpha-tpuv5 \
     --provisioning-model=spot</code></pre>
 
                 <p><strong>For TPUv6e,</strong></p>
@@ -141,11 +149,11 @@ gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --
     --runtime-version=v2-alpha-tpuv6e \
     --provisioning-model=spot</code></pre>
 
-                <p><em>Note:</em> TPUv5e and TPUv6e could only work with <code>provisioning-model</code> as spot,
-                  because they are
-                  popular resources, and Google cloud can preempt it if there are tasks with higher priority requiring
-                  these
-                  resources. But you could get a long-term active TPUv4 VM as it's less demanding by other tasks.</p>
+                <p><em>Note:</em> TPUv5e, TPUv5p and TPUv6e might be easier to get under <code>provisioning-model</code>
+                  as spot or flex-start (with a specific time range) because they are popular resources, and Google
+                  cloud can preempt it if there are tasks with higher priority requiring these resources. But you could
+                  get a long-term active TPUv4 VM as it's less demanding by other tasks.
+                </p>
               </li>
 
               <li>
@@ -181,7 +189,7 @@ gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --
           </section>
 
           <section id="env-setup">
-            <h2>Environment Setup</h2>
+            <h2>Chapter 2: Environment Setup</h2>
             <p>Inside TPU VM, please do following setup to configure the environment.</p>
 
             <ul>
@@ -195,14 +203,161 @@ chmod +x ./Miniconda3-latest-Linux-x86_64.sh
 
               <li>
                 <strong>Step 2: create environment and install required packages</strong>
-                <pre><code>source ~/.bashrc
+                <pre><code>git clone https://github.com/EfficientPPML/CROSS
+source ~/.bashrc
 conda create --name jaxite python=3.13
 conda activate jaxite
 pip install -U "jax[tpu]"
 pip install xprof
 pip install absl-py
 pip install pandas
-pip install gmpy2</code></pre>
+pip install gmpy2
+# Try to run a simple test
+python script.py </code></pre>
+              </li>
+              where <code>script.py</code> is the script you want to run in the jaxite_word folder.
+            </ul>
+          </section>
+
+          <section id="tpu-architecture">
+            <h2>Chapter 3: TPU Architecture</h2>
+
+            <h3>Part 1: TPU micro-architecture (using TPUv4 as an example)</h3>
+            <img src="fig/tpu_tip_image2.png" alt="TPU v4 Architecture Diagram">
+
+            <p>AI accelerators such as TPU feature abundant memory and compute which show great potential for HE
+              acceleration.</p>
+
+            <ul>
+              <li><strong>Large Compute Array (Parallelism):</strong> Each MXU in AI accelerators is 32x larger (e.g.,
+                128x128 in TPUv4) than those in GPUs (typically 4,4,4-Matrix Multiplication). The larger size of MXUs
+                increases on-chip data reuse within the two-dimensional computation arrays, enhancing throughput per
+                watt. Moreover, a sea of 2048 SIMD ALUs, sharing the same VRegs with MXUs and further increasing data
+                reuse.</li>
+              <li><strong>Large On-chip Memory:</strong> AI accelerators feature large on-chip memory, e.g. a single
+                Google TPU v4 chip has 160 MB of on-chip memory, including 128 MB CMEM and 32 MB VMEM array, which is
+                20x/4x larger than the AMD MI100 / NVIDIA A100. This substantial on-chip capacity can accommodate entire
+                ciphertexts to avoid its repeated accesses from off-chip memory, alleviating memory bottleneck inherent
+                in HE workloads for better performance and efficiency.</li>
+              <li><strong>On-chip Data Management Units:</strong> TPU has specialized Cross Lane Unit (XLU), which could
+                (1) transpose data sitting in on-chip VMEM, (2) shuffle data among VMEMs, and (3) accumulate partial
+                results from VMEMs in different lanes into final results.</li>
+            </ul>
+
+            <p>Some functionalities of computation and how is it useful for ML is introduced in this repo: <a
+                href="https://jax-ml.github.io/scaling-book/">https://jax-ml.github.io/scaling-book/</a></p>
+
+            <img src="fig/tpu_tip_image1.png" alt="TPU Components Diagram">
+
+            <p>From a programmer's perspective, a TPU chip mainly consists of three powerful components working
+              together:</p>
+
+            <ol>
+              <li><strong>MXU (Matrix Multiplication Unit):</strong>
+                <ul>
+                  <li><strong>What it does:</strong> Performs massive-scale matrix multiplications such as 8x128x128
+                    matrix multiplication.</li>
+                  <li>This is the most powerful part of the TPU. It’s like a giant calculator dedicated to matrix math.
+                    A single MXU can be 32 times larger than those in a typical GPU, which serves as the key
+                    computational power of TPUs.</li>
+                </ul>
+              </li>
+              <li><strong>VPU (Vector Processing Unit):</strong>
+                <ul>
+                  <li><strong>What it does:</strong> Handles vector operations (like additions, subtractions, and other
+                    general math) that the MXU doesn't handle.</li>
+                  <li>It handles the simpler, non-matrix math tasks.</li>
+                </ul>
+              </li>
+              <li><strong>VRegs (Vectorized Registers):</strong>
+                <ul>
+                  <li><strong>What they are:</strong> A set of coarse-grained on-chip memory locations (4 KB each)
+                    shared by both the MXU and VPU.</li>
+                  <li>This is the temporary 'workbench' for the MXU and VPU. Data must be loaded into VRegs before any
+                    computation can begin. The most efficient way to use the TPU is to keep all the data here to avoid
+                    slow access to off-chip memory. The VRegs organize data in chunks of (8, 128) 32-bit values.</li>
+                </ul>
+              </li>
+            </ol>
+
+            <p><strong>In short</strong>, TPU could be simply viewed as Big "Matrix Multiplication Unit (MXU)" and Big
+              "Vector Processing Unit (VPU)" working on the same set of (8, 128) 32-bit registers (VReg, 4 KB each).</p>
+
+            <p><strong>The Main Goal:</strong> The key to fast TPU code is to <strong>fully utilize the MXU and
+                VPU</strong> by <strong>keeping data in the VRegs</strong> and minimizing slow data movement between
+              memory locations.</p>
+
+            <h3>Part 2: Tips for Writing Fast TPU Code</h3>
+            <p>These tips focus on how to structure your code and data to get the most out of the TPU's architecture.
+            </p>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Tip</th>
+                  <th>What to Do</th>
+                  <th>Why It Works</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1. Fully Utilize the VRegs</td>
+                  <td>Make sure at least two dimensions of your tensor shapes are a multiple of 8 and 128.</td>
+                  <td>The VRegs are optimized for data chunks of size (8, 128). If your data size isn't a multiple of
+                    these numbers, the TPU has to waste resources (VReg space and instructions) to process only a
+                    partial chunk. Matching the (8, 128) granularity ensures your data is perfectly aligned and can be
+                    processed in the fewest number of instructions. A simple example: for an operation like Vectorized
+                    Multiplication, if you use an unoptimized tensor shape of (4, 256), the data must be split,
+                    requiring two VRegs and resulting in only 50% utilization of the VReg slots and requiring two
+                    instructions to complete. By contrast, if you optimize your data shape to (8, 128), it perfectly
+                    aligns with the VReg's internal block size, requiring only 1 VReg to hold all the data and allowing
+                    the operation to complete in a single instruction, significantly boosting efficiency.</td>
+                </tr>
+                <tr>
+                  <td>2. Minimize Layout Transformations</td>
+                  <td>Avoid adding explicit <code>reshape</code> or layout conversion instructions in your code.</td>
+                  <td>A layout conversion is when the TPU has to internally move or reorganize data inside its on-chip
+                    memory. This is non-computational work (it doesn't do any math) and adds extra explicit latency.
+                  </td>
+                </tr>
+                <tr>
+                  <td>3. Offload VPU Work to the MXU</td>
+                  <td>Try to reform any vector-based math (VPU work) into low-precision dense matrix multiplication (MXU
+                    work).</td>
+                  <td>The MXU is designed for matrix math and has a much higher throughput than the VPU. If you can
+                    creatively turn a VPU task into an MXU task (often by using low-precision data types), you switch
+                    the workload from the "Generalist" to the "Heavy Lifter," resulting in a massive speed boost.</td>
+                </tr>
+                <tr>
+                  <td>4. Shuffle Data at a Coarse Granularity</td>
+                  <td>If you <strong>must</strong> shuffle or reorder data, do it at the large (8, 128) VReg chunk
+                    level.</td>
+                  <td>Shuffling is a type of layout transformation. By moving data at the largest possible (8, 128)
+                    granularity, you minimize the total number of instructions the TPU needs to execute for the
+                    rearrangement, reducing the overall overhead.</td>
+                </tr>
+                <tr>
+                  <td>5. Hiding the off-chip memory access</td>
+                  <td>Choose the granularity of data to be loaded such that the off-chip accessing latency could be
+                    hidden by the computation</td>
+                  <td>Off-chip memory access latency could be hidden by carefully selecting a data-loading granularity
+                    that ensures the memory access time is less than the computation time. This optimization aims at
+                    reducing or eliminating the explicit off-chip data accessing latency among consecutive operations to
+                    maximize average compute utilization.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Part 3: Useful Resources for TPU programming</h3>
+            <ul>
+              <li><strong>Multi-Chip Programming with JAX:</strong> Learn how to run a job on multiple TPU chips (less
+                than 8 on a single host VM) by specifying the topology and sharding strategy: <a
+                  href="https://docs.jax.dev/en/latest/jax.sharding.html">JAX Sharding Documentation</a>.</li>
+              <li><strong>Custom Kernel Development with Pallas:</strong> TPU programming can be done using
+                <strong>JAX</strong> (similar to NumPy) for high-level operations, or <strong>Pallas</strong> (Google’s
+                equivalent of Triton) to create customized kernels with explicit control over data loading and
+                computation granularity: <a href="https://docs.jax.dev/en/latest/pallas/index.html">Pallas
+                  Documentation</a>.
               </li>
             </ul>
           </section>
@@ -214,13 +369,9 @@ pip install gmpy2</code></pre>
             <ul>
               <li>Star CROSS repo at <a
                   href="https://github.com/EfficientPPML/CROSS">https://github.com/EfficientPPML/CROSS</a></li>
-              <li>Star the HEIR repo at <a href="https://github.com/google/heir">https://github.com/google/heir</a></li>
-              <li>Star the Jaxite repo at <a
-                  href="https://github.com/google/jaxite">https://github.com/google/jaxite</a></li>
               <li>Cite our paper with biblatex below:</li>
             </ul>
-            <pre><code>
-              @inproceedings{tong2025CROSS,
+            <pre><code>@inproceedings{tong2025CROSS,
 author = {Jianming Tong and Tianhao Huang and Jingtian Dang and Leo de Castro and Anirudh Itagi and Anupam
 Golder and Asra Ali and Jevin Jiang and Jeremy Kun and Arvind and G. Edward Suh and Tushar Krishna},
 title = {Leveraging ASIC AI Chips for Homomorphic Encryption},
@@ -229,19 +380,7 @@ publisher = {2026 IEEE International Symposium on High Performance Computer Arch
 address = {Australia},
 keywords = {AI ASICs, TPU, Fully Homomorphic Encryption},
 location = {Australia},
-series = {HPCA'26} }
-            </code></pre>
-            <pre><code>
-              @misc{ali2025heiruniversalcompilerhomomorphic,
-      title={HEIR: A Universal Compiler for Homomorphic Encryption}, 
-      author={Asra Ali and Jaeho Choi and Bryant Gipson and Shruthi Gorantala and Jeremy Kun and Wouter Legiest and Lawrence Lim and Alexander Viand and Meron Zerihun Demissie and Hongren Zheng},
-      year={2025},
-      eprint={2508.11095},
-      archivePrefix={arXiv},
-      primaryClass={cs.CR},
-      url={https://arxiv.org/abs/2508.11095}, 
-}
-            </code></pre>
+series = {HPCA'26} }</code></pre>
           </section>
 
         </article>
@@ -251,6 +390,7 @@ series = {HPCA'26} }
           <ul>
             <li><a href="#tpu-setup">TPU Setup</a></li>
             <li><a href="#env-setup">Environment Setup</a></li>
+            <li><a href="#tpu-architecture">TPU Architecture</a></li>
             <li><a href="#citation">Citation</a></li>
           </ul>
         </aside>
