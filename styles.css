@@ -241,6 +241,16 @@ h4,
   padding-right: 60px;
 }
 
+.doc-content img {
+  max-width: 80%;
+  height: auto;
+  display: block;
+  margin: 32px auto;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
 /* Sections */
 section {
   padding-bottom: 60px;

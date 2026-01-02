@@ -83,30 +83,204 @@
       <div class="content-wrapper">
         <article class="doc-content">
 
-          <section id="introduction">
-            <h2>Introduction to CPA</h2>
-            <p>Welcome to the beginner's guide for Privacy-Preserving AI Computing (CPA). This section introduces how
-              the system works.</p>
-            <p>[Placeholder for detailed introduction content]</p>
-          </section>
+          <section id="chapter-1">
+            <h2>Chapter 1: Introduction to CKKS HE</h2>
 
-          <section id="terminology">
-            <h2>Terminology</h2>
-            <p>Here are some common terms you will encounter:</p>
+            <h3 id="what-is-he">What is HE and where is it used?</h3>
+            <p>
+              <strong>Homomorphic Encryption (HE)</strong> defines a scheme to encrypt data so that computation (such as
+              multiplication and addition) can be directly performed in the encrypted format. This is known as
+              <strong>encrypted computation</strong>.
+            </p>
             <ul>
-              <li><strong>HE</strong>: Homomorphic Encryption</li>
-              <li><strong>ZKP</strong>: Zero-Knowledge Proofs</li>
-              <li><strong>TPU</strong>: Tensor Processing Unit</li>
+              <li><strong>Privacy-Preserving AI:</strong> HE is primarily used for sensitive applications like
+                healthcare (protecting genomic data), finance (analyzing investment data), and government.</li>
+              <li><strong>Security Foundation:</strong> HE is built on <strong>lattice-based cryptography</strong>,
+                which is considered "post-quantum"—meaning it is secure even against future quantum computers.</li>
+              <li><strong>The CKKS Scheme:</strong> This specific version of HE is designed for <strong>approximate
+                  arithmetic</strong>, making it perfect for real-world tasks like AI inference and signal processing
+                where slight rounding errors are acceptable.</li>
             </ul>
-            <p>[Placeholder for more terminology]</p>
+
+            <h3 id="data-representation">How is data represented after encryption?</h3>
+            <p>
+              To encrypt a list of numbers (a <strong>vector</strong>), we go through a process called
+              <strong>Packing</strong>.
+            </p>
+            <ol>
+              <li><strong>Ciphertext Structure:</strong> A single ciphertext contains a pair of two high-precision
+                polynomials of degree $N$.</li>
+              <li><strong>Slots and Packing:</strong> Each pair of polynomials can hold $N/2$ data elements, termed as
+                <strong>"slots"</strong>. The specific way individual data is placed into these slots is called
+                <strong>"packing"</strong> or <strong>"layout"</strong>.
+              </li>
+              <li><strong>High Precision:</strong> Each coefficient in these polynomials can be <strong>thousands of
+                  bits long</strong> to ensure security, which is much larger than the 32-bit or 64-bit numbers standard
+                computers use.</li>
+            </ol>
+
+            <p>
+              <strong>Example:</strong> As shown in the illustration below, for $N=65536$, a vector of 32,768 data
+              points is encoded into an $N$-degree polynomial and then encrypted into two polynomials of the same
+              degree.
+            </p>
+            <img src="fig/image8.png" alt="Raw data encoding into polynomials">
+
+            <p>
+              <strong>The SIMD Mindset:</strong> Once data is encrypted, it behaves like a <strong>SIMD (Single
+                Instruction, Multiple Data)</strong> machine with a massive vector length. If you add two ciphertexts,
+              the computer adds all $N/2$ slots at once. This makes HE-based encrypted processing exactly work like a
+              SIMD vectorized hardware, such as AVX512. And HE is analogous to an AVX&lt;N/2&gt;, e.g., AVX32768 for
+              N=65536.
+            </p>
+
+            <p><strong>Allowed Operations:</strong></p>
+            <ul>
+              <li><strong>Addition:</strong> Slot-wise addition of two ciphertexts.</li>
+              <li><strong>Multiplication:</strong> Slot-wise multiplication. Note: This is computationally "expensive"
+                and requires extra steps like <strong>Relinearization</strong> and <strong>Rescaling</strong> to manage
+                noise and data size.</li>
+              <li><strong>Rotation:</strong> Moves all data in the slots left or right (e.g., move every number one slot
+                to the right).</li>
+            </ul>
+            <p>
+              Such restriction reformulates the efficiency optimization problem as a problem of how to convert
+              application into a sequence of SIMD Addition, SIMD Multiplication and SIMD rotation of a very-long vector,
+              to minimize overall costs.
+            </p>
           </section>
 
-          <section id="setup">
-            <h2>Setup Guide</h2>
-            <p>Follow these steps to set up your environment:</p>
-            <pre><code># Example setup command
-pip install cross-lib</code></pre>
-            <p>[Placeholder for setup instructions]</p>
+          <section id="he-compilation-stack">
+            <h2>Chapter 2: The HE Compilation Stack</h2>
+            <p>
+              To tackle this entire problem structurally, HE acceleration techniques, particularly for CKKS encryption,
+              could be formally categorized into five distinct layers, including Packing, Mapping, Scheduling,
+              Decomposing and Binding.
+            </p>
+            <ol>
+              <li><strong>Packing</strong> defines how data is organized within ciphertext slots. Specifically, a CKKS
+                ciphertext operates like a vector of SIMD units, encoding multiple data per ciphertext and enforcing
+                lock-step operator for all encoded data. Thus, operators in original applications initially designed for
+                element-wise computations must be transformed into SIMD-compatible, HE-specific Privacy-Preserving
+                Operators (PP-Ops).</li>
+              <li><strong>Mapping</strong> translates PP-Ops into sequences of fundamental HE operators. Optimal mapping
+                seeks maximum arithmetic intensity, data reuse, and parallelism while minimizing computational and
+                memory overhead to reduce latency.</li>
+              <li><strong>Scheduling</strong> determines how HE kernels are scheduled for each HE operator (e.g.,
+                addition, multiplication, rotation, rescale, bootstrapping).</li>
+              <li><strong>Decomposing</strong> specifies arithmetic and memory operations on individual ciphertexts for
+                HE kernels.</li>
+              <li><strong>Binding:</strong> Arithmetic and memory operations are translated into hardware-specific
+                programming interfaces (e.g. JAX for TPU), or low-level hardware ISAs (e.g. SIMD ISA for TPU).</li>
+            </ol>
+            <img src="fig/image12.png" alt="HE Compilation Stack Overview">
+          </section>
+
+          <section id="math-foundations">
+            <h2>Chapter 3: Mathematical Foundations &amp; Data Representation</h2>
+            <p>
+              Standard hardware units (like 32-bit CPUs or 8-bit TPU MXUs) cannot natively support thousand-bit
+              coefficients. We solve this through <strong>precision lowering</strong> and <strong>tensor
+                representation</strong>.
+            </p>
+
+            <h3>Mathematical Basics: Fields and Rings</h3>
+            <p>To understand HE from a computation perspective, we look at how numbers are constrained:</p>
+            <ul>
+              <li><strong>Finite Fields (Coefficients):</strong> Each polynomial coefficient is an integer in a finite
+                field, meaning there are limited choices of integer values. For example, a modulus $q=14$ gives 14
+                choices (0–13). If a value overflows, a modular reduction brings it back into range.</li>
+            </ul>
+            <img src="fig/image11.png" alt="Finite Field Modulus Example">
+
+            <ul>
+              <li><strong>Polynomial Rings:</strong> Putting all coefficients together forms a <strong>ring</strong>,
+                which has a limited number of degrees. When the degree overflows, a modular reduction by a polynomial
+                modulus (e.g., $\Phi(x) = x^{16} + 1$) is used to bring it back.</li>
+            </ul>
+            <img src="fig/image3.png" alt="Polynomial Ring Example">
+
+            <h3>Precision Lowering (thousands to 32 or to 8)</h3>
+            <p>Standard hardware cannot process 1000-bit integers directly. We use two mathematical "tricks" to solve
+              this:</p>
+            <ol>
+              <li><strong>Residue Number System (RNS):</strong> We break one "giant" polynomial into $L$ smaller
+                polynomials called <strong>Limbs</strong> (or Towers). Each limb uses smaller coefficients (e.g., 32-bit
+                or 64-bit) that hardware natively supports.</li>
+            </ol>
+            <img src="fig/image9.png" alt="RNS Limbs">
+
+            <ol start="2">
+              <li><strong>Digit Decomposition:</strong> For even smaller hardware units (like 8-bit units in a TPU), we
+                further break these limbs into "chunks" or "bytes".</li>
+            </ol>
+            <img src="fig/image1.png" alt="Digit Decomposition">
+
+            <h3>Data Representation (4D or 5D Tensor)</h3>
+            <p>
+              After lowering the precision using techniques like the <strong>Residue Number System (RNS)</strong>, we
+              can represent ciphertext as a multi-dimensional tensor.
+            </p>
+            <ol>
+              <li><strong>4D Tensor:</strong> Each ciphertext is represented by a 4D vector indexed by {Batch (B),
+                Elements (E), Degree (N), Limbs (L)}. In this representation, each specific combination of indices
+                specifies a single coefficient.</li>
+            </ol>
+            <img src="fig/image2.png" alt="4D Tensor Representation">
+
+            <ol start="2">
+              <li><strong>5D Tensor:</strong> If each individual byte of a coefficient must be explicitly represented
+                (for low-precision hardware like 8-bit units), the data becomes a 5D tensor: {Batch (B), Elements (E),
+                Degree (N), Limbs (L), Bytes (K)}.</li>
+            </ol>
+            <img src="fig/image5.png" alt="5D Tensor Representation">
+
+            <p>
+              All operations do not alter the value of degree, hence we could just hide it in the visualization for
+              simplicity. Therefore, we simplify it into representing each limb as a circle, as shown below.
+            </p>
+            <img src="fig/image4.png" alt="Simplified Limb Representation">
+
+            <h3>Acceleration with NTT</h3>
+            <p>
+              Multiplying polynomials naively is expensive ($O(N^2)$). We use the <strong>Number-Theoretic Transform
+                (NTT)</strong> to transform coefficients into the <strong>evaluation domain</strong>, where
+              multiplication becomes element-wise.
+            </p>
+            <ul>
+              <li><strong>Blue Circles:</strong> Represent the <strong>coefficient domain</strong>.</li>
+              <li><strong>Red Circles:</strong> Represent the <strong>evaluation domain</strong>.</li>
+            </ul>
+            <img src="fig/image6.png" alt="NTT Domain Transformation">
+          </section>
+
+
+          <section id="computational-flow">
+            <h2>Chapter 4: Detailed Computational Flow</h2>
+            <p>HE operators require complex sequences of kernels to manage the mathematical properties of the
+              ciphertext.</p>
+
+            <h3>HE Multiplication</h3>
+            <p>HE multiplication is not a single step; it involves a sequence of four stages to maintain the
+              ciphertext's integrity and manage noise:</p>
+            <ol>
+              <li><strong>Rescale:</strong> Adjusts the scale of the fixed-point numbers after multiplication.</li>
+              <li><strong>Ciphertext Multiplication:</strong> Multiplies the polynomials, which temporarily increases
+                the number of elements (from 2 elements to 3).</li>
+              <li><strong>Key Switch (Relinearization):</strong> Converts the 3-element result back into a standard
+                2-element ciphertext.</li>
+              <li><strong>Basis Conversion (Modulus Down):</strong> Lowers the modulus to manage noise growth.</li>
+            </ol>
+            <img src="fig/image7.png" alt="HE Multiplication Flow">
+
+            <h3>HE Rotation</h3>
+            <p>
+              HE Rotation moves all data in the slots in the same direction with the same distance. This requires a
+              specialized procedure involving <strong>Digit Decomposition</strong>, a <strong>KeySwitch Core</strong>,
+              and finally <strong>AutoMorphism</strong> (Degree-wise Shuffling) to physically move the data within the
+              polynomial structure.
+            </p>
+            <img src="fig/image10.png" alt="HE Rotation Flow">
           </section>
 
         </article>
@@ -114,9 +288,12 @@ pip install cross-lib</code></pre>
         <aside class="on-this-page">
           <h4>On this page</h4>
           <ul>
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#terminology">Terminology</a></li>
-            <li><a href="#setup">Setup</a></li>
+            <li><a href="#chapter-1">Introduction</a></li>
+            <li><a href="#what-is-he">What is HE?</a></li>
+            <li><a href="#data-representation">Data Representation</a></li>
+            <li><a href="#he-compilation-stack">Compilation Stack</a></li>
+            <li><a href="#math-foundations">Math Foundations</a></li>
+            <li><a href="#computational-flow">Computational Flow</a></li>
           </ul>
         </aside>
       </div>
