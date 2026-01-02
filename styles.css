@@ -766,6 +766,50 @@ pre {
   border: 1px solid var(--border-color);
 }
 
+
 code {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  /* For border radius */
+  box-shadow: var(--shadow-sm);
+}
+
+th,
+td {
+  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--bg-sidebar);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+tr:nth-child(even) {
+  background-color: var(--bg-sidebar);
+  /* Use sidebar bg for slight contrast or define a stripe color */
+  /* Often sidebar bg is good for subtle stripes in light mode. Let's check dark mode compatibility. */
+}
+
+/* Ensure alternating rows are visible in dark mode. 
+   var(--bg-sidebar) in dark mode is #11131f, bg-card is #1a1d2d. 
+   Sidebar is darker than card? Let's check variables.
+   Dark mode: bg-sidebar #11131f, bg-card #1a1d2d. 
+   So even rows will be darker. That works for stripes. 
+*/
+
+.math {
+  font-family: "Times New Roman", Times, serif;
+  font-style: italic;
 }

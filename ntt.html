@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTT Implementation Guide - Privacy-Preserving AI Computing</title>
+  <meta name="description" content="Guide to Number Theoretic Transform (NTT) implementations.">
+
+  <!-- Google Fonts: Inter & Outfit for a more modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">CPA TUTORIAL</div>
+        <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- New Sections -->
+        <div class="nav-section">
+          <h3 class="nav-title">tutorial</h3>
+          <ul class="nav-links">
+            <li><a href="index.html">ASPLOS'26@Pittsburgh</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">docs</h3>
+          <ul class="nav-links">
+            <li><a href="beginner.html">beginner</a></li>
+            <li><a href="tpu.html">tpu setup</a></li>
+            <li><a href="ntt.html" class="active">NTT algorithms</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <div class="header-title">NTT Implementation Guide</div>
+
+        <div class="top-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <article class="doc-content">
+
+          <section id="ntt-introduction">
+            <h2>NTT Implementation Guide</h2>
+            <p>It could run by calling <code>python3 ntt_test.py</code>.</p>
+            <p>This directory (<code>pedagagy</code>, <a
+                href="https://github.com/EfficientPPML/CROSS/blob/main/jaxite_word/pedagagy">link</a>) contains
+              educational and production-oriented implementations of Number Theoretic Transform (NTT) algorithms.
+              The code illustrates the evolution from mathematical definitions to highly optimized, hardware-accelerated
+              kernels.</p>
+          </section>
+
+          <section id="ntt-variants">
+            <h2>1. NTT Variants Include</h2>
+            <p>We implement two primary mathematical variants of the NTT, essential for Homomorphic Encryption (BFV,
+              CKKS,
+              etc.):</p>
+            <ul>
+              <li><strong>Cyclic NTT / INTT</strong>:
+                <ul>
+                  <li>The standard transform over a finite field.</li>
+                  <li>Used for polynomial multiplication in <span class="math">R<sub>q</sub> = ℤ<sub>q</sub>[X] /
+                      (X<sup>N</sup>
+                      - 1)</span>.</li>
+                </ul>
+              </li>
+              <li><strong>Negacyclic NTT / INTT</strong>:
+                <ul>
+                  <li>Used for polynomial rings of the form <span class="math">R<sub>q</sub> = ℤ<sub>q</sub>[X] /
+                      (X<sup>N</sup>
+                      + 1)</span>.</li>
+                  <li><strong>Implementation</strong>: Realized by "Pre-twisting" (multiplying coefficients by powers of
+                    <span class="math">ψ</span>, where <span class="math">ψ<sup>2</sup> = ω</span>), running a Cyclic
+                    NTT, and
+                    "Post-twisting" for the inverse.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <section id="ntt-algorithms">
+            <h2>2. Algorithms of NTT</h2>
+            <p>We provide implementations with different algorithmic complexities and structural properties:</p>
+            <ul>
+              <li><strong>Original / Naive (<span class="math">O(N<sup>2</sup>)</span>)</strong>:
+                <ul>
+                  <li>Direct matrix-vector multiplication.</li>
+                  <li><strong>Purpose</strong>: Golden reference for correctness and understanding the definition.</li>
+                </ul>
+              </li>
+              <li><strong>Cooley-Tukey (<span class="math">O(N log N)</span>)</strong>:
+                <ul>
+                  <li>Standard recursive decomposition (FFT).</li>
+                  <li><strong>Implementation</strong>: Iterative "Bit-Reverse" approach.</li>
+                </ul>
+              </li>
+              <li><strong>4-Step NTT (<span class="math">O(N<sup>1.5</sup>)</span>)</strong>:
+                <ul>
+                  <li>Decomposes the transform into: Column NTT &rarr; Twiddle multiplication &rarr; Row NTT.</li>
+                  <li><strong>Purpose</strong>: Improves memory locality and parallelization structure.</li>
+                </ul>
+              </li>
+              <li><strong>3-Step NTT (<span class="math">O(N<sup>1.5</sup>)</span>)</strong>:
+                <ul>
+                  <li>A "Layout Invariant" or "Stockham-like" approach optimized for hardware (TPU) with high penalty
+                    for layout
+                    transformation.</li>
+                  <li><strong>Purpose</strong>: Expresses NTT purely as a sequence of large matrix multiplications to
+                    maximize
+                    arithmetic density.</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <section id="modular-reduction">
+            <h2>3. Modular Reduction Algorithms</h2>
+            <p>Efficient modular reduction is critical for performance. We support:</p>
+            <ul>
+              <li><strong>Barrett Reduction</strong>:
+                <ul>
+                  <li>Uses precomputed <code>s_w</code>, <code>w</code>, <code>m</code> scalar factors to estimate
+                    quotients.
+                  </li>
+                  <li>Dominant in the JAX/TPU implementations.</li>
+                </ul>
+              </li>
+              <li><strong>Montgomery Reduction</strong>:
+                <ul>
+                  <li>Transforms values into Montgomery form to replace division with logical shifts.</li>
+                  <li>Used in specific high-performance variants (<code>ntt_three_step_bat_montgomery_batch</code>).
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <section id="layouts-batching">
+            <h2>4. Layouts and Batching</h2>
+            <p>To support various hardware configurations and use-cases, we support different data layouts:</p>
+            <ul>
+              <li><strong>Batching</strong>:
+                <ul>
+                  <li><strong>Batch First</strong>: <code>(Batch, N, ...)</code></li>
+                  <li><strong>Batch Second</strong>: <code>(Moduli, Batch, N, ...)</code> - Optimization to keep batch
+                    dimensions adjacent to dense compute dimensions or for specific sharding strategies.</li>
+                </ul>
+              </li>
+              <li><strong>Multi-Moduli (RNS)</strong>:
+                <ul>
+                  <li>Native support for processing multiple Residue Number System (RNS) limbs concurrently.</li>
+                </ul>
+              </li>
+              <li><strong>Sharding</strong>:
+                <ul>
+                  <li>Implicit support via JAX <code>pmap</code> / <code>vmap</code> compatible structures, allowing
+                    distribution across devices by batch or modulus.</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <section id="summary-table">
+            <h2>5. Summary Tables</h2>
+            <p>The following table maps the algorithmic concepts to their functional APIs in <code>ntt.py</code> and
+              corresponding tests in <code>ntt_test.py</code>.</p>
+
+            <h3>Cyclic NTT</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Complexity</th>
+                  <th>Reduction</th>
+                  <th>Implementation API</th>
+                  <th>Test Case (in <code>ntt_test.py</code>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Original</strong></td>
+                  <td><span class="math">O(N<sup>2</sup>)</span></td>
+                  <td>Python <code>%</code></td>
+                  <td><code>ntt_original_form</code></td>
+                  <td><code>test_C_NTT_None_Barrett_BatchFirst_none</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Cooley-Tukey</strong></td>
+                  <td><span class="math">O(N log N)</span></td>
+                  <td>Python <code>%</code></td>
+                  <td><code>ntt_bit_reverse</code></td>
+                  <td><code>test_br_C_NTT_None_Barrett_BatchFirst_none</code></td>
+                </tr>
+                <tr>
+                  <td><strong>4-Step</strong></td>
+                  <td><span class="math">O(N<sup>1.5</sup>)</span></td>
+                  <td>Python <code>%</code></td>
+                  <td><code>ntt_four_step</code></td>
+                  <td><code>test_4_step_C_NTT_None_Barrett_BatchFirst_none</code></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Negacyclic NTT</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Algorithm</th>
+                  <th>Complexity</th>
+                  <th>Reduction</th>
+                  <th>Implementation API</th>
+                  <th>Test Case (in <code>ntt_test.py</code>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Cooley-Tukey</strong></td>
+                  <td><span class="math">O(N log N)</span></td>
+                  <td>Python <code>%</code></td>
+                  <td><code>ntt_negacyclic_bit_reverse</code></td>
+                  <td><code>test_br_N_NTT_None_Barrett_BatchFirst_none</code></td>
+                </tr>
+                <tr>
+                  <td><strong>Cooley-Tukey</strong></td>
+                  <td><span class="math">O(N log N)</span></td>
+                  <td><strong>Barrett</strong></td>
+                  <td><code>ntt_negacyclic_bit_reverse_jax</code></td>
+                  <td><code>test_br_N_NTT_None_Barrett_BatchFirst_none_Jax</code></td>
+                </tr>
+                <tr>
+                  <td><strong>4-Step</strong></td>
+                  <td><span class="math">O(N<sup>1.5</sup>)</span></td>
+                  <td>Python <code>%</code></td>
+                  <td><code>ntt_negacyclic_four_step</code></td>
+                  <td><code>test_4_step_N_NTT_None_Barrett_BatchFirst_none</code></td>
+                </tr>
+                <tr>
+                  <td><strong>3-Step</strong></td>
+                  <td><span class="math">O(N<sup>1.5</sup>)</span></td>
+                  <td>Python <code>%</code></td>
+                  <td><code>ntt_negacyclic_three_step</code></td>
+                  <td><code>test_3_step_N_NTT_None_Barrett_BatchFirst_none</code></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Optimized / Hardware Implementations (Negacyclic)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Variant</th>
+                  <th>Reduction</th>
+                  <th>Implementation API</th>
+                  <th>Test Case</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>JAX / BAT</strong></td>
+                  <td>3-Step, Batched</td>
+                  <td><strong>Barrett</strong></td>
+                  <td><code>ntt_three_step_bat_barrett_batch</code></td>
+                  <td><code>test_3_step_N_NTT_SMB_Barrett_BatchFirst_none</code></td>
+                </tr>
+                <tr>
+                  <td><strong>JAX / BAT</strong></td>
+                  <td>3-Step, Multi-Mod</td>
+                  <td><strong>Barrett</strong></td>
+                  <td><code>ntt_three_step_bat_barrett_multi_moduli</code></td>
+                  <td><code>test_3_step_N_NTT_MMB_Barrett_BatchSecond_none</code></td>
+                </tr>
+                <tr>
+                  <td><strong>JAX / BAT</strong></td>
+                  <td>3-Step, Batched</td>
+                  <td><strong>Montgomery</strong></td>
+                  <td><code>ntt_three_step_bat_montgomery_batch</code></td>
+                  <td><em>Integrated in performance tests</em></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Configurable Knobs Reference</h3>
+            <ul>
+              <li><code>q</code>: Prime modulus.</li>
+              <li><code>psi</code>: Primitive <span class="math">2N</span>-th root of unity (for negacyclic).</li>
+              <li><code>omega</code>: Primitive <span class="math">N</span>-th root of unity (<span class="math">ω =
+                  ψ<sup>2</sup></span>).</li>
+              <li><code>r</code>, <code>c</code>: Row and column factors where <span class="math">N = r × c</span>.</li>
+              <li><code>s_w</code>, <code>w</code>, <code>m</code>: Barrett reduction precomputed constants.</li>
+              <li><code>tf_step*</code>: Twiddle factor matrices (precomputed control constants).</li>
+            </ul>
+          </section>
+
+          <!-- Citation Section -->
+          <section id="citation" class="citation-section">
+            <h2>Citation</h2>
+            <p>If you find this tutorial helpful, feel free to star our github repo at <a
+                href="https://github.com/EfficientPPML/CROSS">https://github.com/EfficientPPML/CROSS</a> or cite our
+              paper with biblatex below:</p>
+            <pre><code>@INPROCEEDINGS{tong2025leveragingasicaichips,
+title={Leveraging ASIC AI Chips for Homomorphic Encryption},
+author={Jianming Tong and Tianhao Huang and Leo de Castro and Anirudh Itagi and Jingtian Dang
+and Anupam Golder and Asra Ali and Jevin Jiang and Arvind and G. Edward Suh and Tushar Krishna},
+  booktitle={2026 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={}}</code></pre>
+          </section>
+        </article>
+
+        <aside class="on-this-page">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#ntt-variants">Variants</a></li>
+            <li><a href="#ntt-algorithms">Algorithms</a></li>
+            <li><a href="#modular-reduction">Reductions</a></li>
+            <li><a href="#layouts-batching">Layouts</a></li>
+            <li><a href="#summary-table">Summary</a></li>
+            <li><a href="#citation">Citation</a></li>
+          </ul>
+        </aside>
+      </div>
+
+      <footer class="site-footer">
+        <p>&copy; 2026 Cryptography Primitives Acceleration Tutorial.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
