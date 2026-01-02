@@ -742,13 +742,30 @@ body.sidebar-hidden .main-content {
 }
 
 /* Adjustments for dark mode brightness if needed */
-[data-theme="dark"] .sponsor-logo {
-  /* Keep colors but ensure visibility */
-  filter: brightness(1.2);
-  opacity: 0.9;
-}
-
 [data-theme="dark"] .sponsor-logo:hover {
   filter: brightness(1.3);
   opacity: 1;
+}
+
+/* Citation Section & Code Blocks */
+.citation-section {
+  margin-top: 60px;
+  padding-top: 40px;
+}
+
+pre {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 16px 0;
+  border: 1px solid var(--border-color);
+}
+
+code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }

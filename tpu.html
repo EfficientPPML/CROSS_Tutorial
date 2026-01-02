@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TPU Setup - Privacy-Preserving AI Computing</title>
+  <meta name="description" content="Guide to setting up Google Cloud TPU for Privacy-Preserving AI.">
+
+  <!-- Google Fonts: Inter & Outfit for a more modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">CPA TUTORIAL</div>
+        <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- New Sections -->
+        <div class="nav-section">
+          <h3 class="nav-title">tutorial</h3>
+          <ul class="nav-links">
+            <li><a href="index.html">ASPLOS'26@Pittsburgh</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">docs</h3>
+          <ul class="nav-links">
+            <li><a href="beginner.html">beginner</a></li>
+            <li><a href="tpu.html" class="active">tpu setup</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <div class="header-title">TPU Setup Guide</div>
+
+        <div class="top-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <article class="doc-content">
+
+          <section id="tpu-setup">
+            <h2>2. TPU Setup</h2>
+
+            <ul>
+              <li>
+                <strong>Step 1: Create a Google Project</strong><br>
+                <a
+                  href="https://cloud.google.com/appengine/docs/standard/nodejs/building-app/creating-project">tutorial</a>.
+                <br><br>
+                Obtain the name of the project as <code>&lt;google_project_name&gt;</code> and <strong>Google Project
+                  ID</strong>
+                from the created project.
+              </li>
+
+              <li>
+                <strong>Step 2: Apply for the Tree-tier TPU trail for 30 days</strong>
+                <a href="https://sites.research.google/trc/about/">TRC</a>
+                <p>Once submitted the request, an email will be shot to you within one day, where there is a link to
+                  fill in a
+                  survey with your <strong>Google project ID</strong>.</p>
+              </li>
+
+              <li>
+                <strong>Step 3: Launch TPU VM.</strong>
+                <p>You could do it over GUI or gcloud cli (in your local machine) to create a TPU VM. I give the gcloud
+                  cli as it
+                  works for all generations (>=v4) of TPUs.</p>
+
+                <!-- Placeholder for Image mentioned in previous content -->
+                <!-- [Image of Google Cloud TPU architecture and VM connection workflow] -->
+
+                <p><strong>For TPUv4,</strong></p>
+                <pre><code>gcloud config set project &lt;google_project_name&gt;
+gcloud config set compute/zone us-central2-b
+gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --node-id=&lt;your_favoriate_node_name&gt; \
+    --zone=us-central2-b \
+    --accelerator-type=v4-8 \
+    --runtime-version=v2-alpha-tpuv4</code></pre>
+
+                <p><strong>For TPUv5e,</strong></p>
+                <pre><code>gcloud config set project &lt;google_project_name&gt;
+gcloud config set compute/zone us-central1-a
+gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --node-id=&lt;your_favoriate_node_name&gt; \
+    --zone=us-central1-a \
+    --accelerator-type=v5litepod-4 \
+    --runtime-version=v2-alpha-tpuv5-lite \
+    --provisioning-model=spot</code></pre>
+
+                <p><strong>For TPUv6e,</strong></p>
+                <pre><code>gcloud config set project &lt;google_project_name&gt;
+gcloud config set compute/zone us-east1-d
+gcloud alpha compute tpus queued-resources create &lt;google_project_name&gt; --node-id=&lt;your_favoriate_node_name&gt; \
+    --zone=us-east1-d \
+    --accelerator-type=v6e-1 \
+    --runtime-version=v2-alpha-tpuv6e \
+    --provisioning-model=spot</code></pre>
+
+                <p><em>Note:</em> TPUv5e and TPUv6e could only work with <code>provisioning-model</code> as spot,
+                  because they are
+                  popular resources, and Google cloud can preempt it if there are tasks with higher priority requiring
+                  these
+                  resources. But you could get a long-term active TPUv4 VM as it's less demanding by other tasks.</p>
+              </li>
+
+              <li>
+                <strong>Step 4: Setup Remote SSH (VSCode or Cursor) to TPU VM</strong>
+                <p>Once the requested TPU vm is up and running as shown in Google console, you could use gcloud to
+                  forward the SSH
+                  port of the remote machine to a port of local machine and setup VSCode remote ssh.</p>
+                <p>You need to first setup local ssh key to Google's compute engine, following <a
+                    href="https://cloud.google.com/compute/docs/connect/create-ssh-keys#gcloud">link</a>. After your
+                  follow the
+                  instructions on the page, the ssh key will be dumped here
+                  <code>&lt;path_to_local_user&gt;/.ssh/google_compute_engine</code>.
+                </p>
+
+                <pre><code>gcloud compute tpus tpu-vm ssh &lt;gcloud_user_name&gt;@&lt;your_favoriate_node_name&gt; -- -L 9009:localhost:22</code></pre>
+                <p>Where <code>9009</code> is the port of local machine, while <code>22</code> is the SSH port of the
+                  TPU vm.</p>
+
+                <p>After you set it up, you could configure VSCode to use the remote SSH package <a
+                    href="https://code.visualstudio.com/docs/remote/ssh">link</a> to remotely access into TPUvm.</p>
+
+                <pre><code>Host tpu-vm
+  User &lt;gcloud_user_name&gt;
+  HostName localhost
+  Port 9009
+  IdentityFile &lt;path_to_local_user&gt;/.ssh/google_compute_engine</code></pre>
+
+                <p>After this, you should follow the steps on <a
+                    href="https://code.visualstudio.com/docs/remote/ssh">link</a> to
+                  log into TPU VM.</p>
+              </li>
+            </ul>
+          </section>
+
+          <section id="env-setup">
+            <h2>Environment Setup</h2>
+            <p>Inside TPU VM, please do following setup to configure the environment.</p>
+
+            <ul>
+              <li>
+                <strong>Step 1: install miniconda</strong>
+                <pre><code>wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod +x ./Miniconda3-latest-Linux-x86_64.sh
+./Miniconda3-latest-Linux-x86_64.sh
+# follow instructions and set up launch into .bashrc</code></pre>
+              </li>
+
+              <li>
+                <strong>Step 2: create environment and install required packages</strong>
+                <pre><code>source ~/.bashrc
+conda create --name jaxite python=3.13
+conda activate jaxite
+pip install -U "jax[tpu]"
+pip install xprof
+pip install absl-py
+pip install pandas
+pip install gmpy2</code></pre>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Citation Section -->
+          <section id="citation" class="citation-section">
+            <h2>Citation</h2>
+            <p>If you find this tutorial helpful, feel free to star our github repo at <a
+                href="https://github.com/EfficientPPML/CROSS">https://github.com/EfficientPPML/CROSS</a> or cite our
+              paper with biblatex below:</p>
+            <pre><code>@INPROCEEDINGS{tong2025leveragingasicaichips,
+title={Leveraging ASIC AI Chips for Homomorphic Encryption},
+author={Jianming Tong and Tianhao Huang and Leo de Castro and Anirudh Itagi and Jingtian Dang
+and Anupam Golder and Asra Ali and Jevin Jiang and Arvind and G. Edward Suh and Tushar Krishna},
+  booktitle={2026 IEEE International Symposium on High Performance Computer Architecture (HPCA)}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={}}</code></pre>
+          </section>
+
+        </article>
+
+        <aside class="on-this-page">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#tpu-setup">TPU Setup</a></li>
+            <li><a href="#env-setup">Environment Setup</a></li>
+            <li><a href="#citation">Citation</a></li>
+          </ul>
+        </aside>
+      </div>
+
+      <footer class="site-footer">
+        <p>&copy; 2026 Cryptography Primitives Acceleration Tutorial.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
