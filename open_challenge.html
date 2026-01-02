@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Challenge - Privacy-Preserving AI Computing</title>
+  <meta name="description" content="Open Research and Engineering Challenges in Privacy-Preserving AI.">
+
+  <!-- Google Fonts: Inter & Outfit for a more modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">CPA TUTORIAL</div>
+        <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- New Sections -->
+        <div class="nav-section">
+          <h3 class="nav-title">tutorial</h3>
+          <ul class="nav-links">
+            <li><a href="index.html">ASPLOS'26@Pittsburgh</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">docs</h3>
+          <ul class="nav-links">
+            <li><a href="beginner.html">beginner</a></li>
+            <li><a href="tpu.html">tpu setup</a></li>
+            <li><a href="ntt.html">NTT algorithms</a></li>
+            <li><a href="open_challenge.html" class="active">Open Challenge</a></li>
+          </ul>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <div class="header-title">Open Challenge</div>
+
+        <div class="top-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <article class="doc-content">
+
+          <section id="research-challenge">
+            <h2>Open Research Challenge</h2>
+            <ol>
+              <li>
+                <strong>Basis Conversion (BConv)</strong><br>
+                involves two different sets of moduli in the experiments, which currently utilizes Barrett Reduction
+                because Montgomery reduction would require bringing all data from the Montogmery domain of the old
+                modulus back to the raw domain and then convert into the Montgomery domain of the new modulus. The chain
+                overhead of domain conversion with actual Montgomery reduction makes the overhead higher than the pure
+                Barrett reduction.
+              </li>
+              <li>
+                <strong>Automorphism</strong><br>
+                requires a shuffling at the degree dimension, how to break such shuffling into a sequence of two matrix
+                multiplication so that they could be fused into the previous computation remains an open research
+                question.
+              </li>
+            </ol>
+          </section>
+
+          <section id="engineering-challenge">
+            <h2>Open Engineering Challenge</h2>
+            <ol>
+              <li>
+                Implement rational rescaling to allow more multiplication depth.
+              </li>
+            </ol>
+          </section>
+
+        </article>
+
+        <aside class="on-this-page">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#research-challenge">Research Challenge</a></li>
+            <li><a href="#engineering-challenge">Engineering Challenge</a></li>
+          </ul>
+        </aside>
+      </div>
+
+      <footer class="site-footer">
+        <p>&copy; 2026 Cryptography Primitives Acceleration Tutorial.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
