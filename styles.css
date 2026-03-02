@@ -253,6 +253,12 @@ h4,
   margin-top: 2rem;
 }
 
+.doc-content.no-heading-space h2,
+.doc-content.no-heading-space h3,
+.doc-content.no-heading-space h4 {
+  margin-top: 0;
+}
+
 .doc-content img {
   max-width: 100%;
   height: auto;
