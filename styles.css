@@ -241,6 +241,18 @@ h4,
   padding-right: 60px;
 }
 
+.doc-content h2 {
+  margin-top: 3rem;
+}
+
+.doc-content h3 {
+  margin-top: 2.5rem;
+}
+
+.doc-content h4 {
+  margin-top: 2rem;
+}
+
 .doc-content img {
   max-width: 100%;
   height: auto;
@@ -565,6 +577,10 @@ section:last-child {
   color: var(--primary-color);
 }
 
+.on-this-page li a.toc-h3 {
+  padding-left: 32px;
+  font-size: 0.82rem;
+}
 
 /* Footer */
 .site-footer {

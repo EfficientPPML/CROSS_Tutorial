@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CROSS - Enabling Google TPUs for Homomorphic Encryption</title>
+  <meta name="description"
+    content="CROSS: context, design, BAT, MAT, modular reduction, and HE operators for TPU-accelerated Homomorphic Encryption.">
+
+  <!-- Google Fonts: Inter & Outfit for a more modern look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+
+<body>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">CPA TUTORIAL</div>
+        <button id="mobile-close-btn" class="icon-btn" aria-label="Close Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <h3 class="nav-title">tutorial</h3>
+          <ul class="nav-links">
+            <li><a href="index.html">ASPLOS'26@Pittsburgh</a></li>
+          </ul>
+        </div>
+
+        <div class="nav-section">
+          <h3 class="nav-title">docs</h3>
+          <ul class="nav-links">
+            <li><a href="beginner.html">Easy HE Background</a></li>
+            <li><a href="cross.html" class="active">CROSS</a></li>
+            <li><a href="tpu.html">TPU Novice to Master</a></li>
+            <li><a href="ntt.html">NTT Algorithms</a></li>
+            <li><a href="open_challenge.html">Open Challenge</a></li>
+          </ul>
+        </div>
+
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <button id="mobile-menu-btn" class="icon-btn" aria-label="Open Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18" />
+          </svg>
+        </button>
+
+        <div class="header-title">CROSS</div>
+
+        <div class="top-actions">
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+            <!-- Sun Icon -->
+            <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <!-- Moon Icon -->
+            <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <article class="doc-content">
+
+          <!-- ==================== CONTEXT ==================== -->
+
+          <!-- Objective Section -->
+          <section id="objective">
+            <h1>CROSS</h1>
+
+            <h2>Objective</h2>
+
+            <p>
+              <strong>Tl;dr:</strong> CROSS is a JAX library of CKKS scheme Homomorphic Encryption, which runs on
+              Google TPUs to achieve state-of-the-art throughput, better than contemporary GPUs and FPGAs.
+            </p>
+
+            <p>
+              The core problem: billions of dollars of AI ASIC silicon sits deployed in datacenters worldwide, yet
+              the conventional view categorizes these chips narrowly by their designed purpose&mdash;AI training and
+              inference&mdash;leaving their broader computational potential untapped for workloads like FHE that
+              desperately need high-throughput, energy-efficient acceleration.
+            </p>
+
+            <p>
+              CROSS addresses this problem by proving that AI ASICs can be repurposed for Homomorphic Encryption (HE),
+              achieving state-of-the-art (SotA) throughput and energy efficiency (performance per watt) without any
+              hardware modifications.
+            </p>
+
+          </section>
+
+          <!-- Background Section -->
+          <section id="background">
+            <h2>Background</h2>
+
+            <h3 id="ai-revolution">AI is Driving New Industry Revolution</h3>
+
+            <p>
+              Artificial Intelligence (AI) is driving a new industrial revolution. It transforms applications from
+              chatbots, robotics, AI coder, autonomous vehicles, biology protein discovery and AI factory, into
+              digital tokens. In other words, the world is being digitalized and tokenized for AI Assistance.
+            </p>
+
+            <img src="fig/AI_tokenize.png" alt="AI is tokenizing the world" style="width:100%">
+            <p>
+              However, such a revolution has been hindered by the "privacy concern" today. For example, real-world
+              privacy incidents (Samsung banning ChatGPT after code leaks, Grok exposing user conversations through
+              public search, Microsoft delaying AI Recall over on-device privacy) have made encryption a must-have
+              requirement. This brings the central question: <strong>"How to protect the privacy of user data and
+                models?"</strong>
+            </p>
+
+            <h3 id="privacy-concerns">Privacy Concerns Hinder AI Adoption</h3>
+
+            <p>
+              Today, the most advanced Large Language Models (LLMs), their training data, and analysis tools are
+              closed-sourced. Confidential data&mdash;medical records, government documents, financial
+              transactions&mdash;cannot be shared with cloud AI providers. This creates a trust boundary between data
+              owners (hospitals, government agencies, enterprises) and AI service providers. Such a two-side boundary
+              creates a gap to use the right-hand-side private model to serve the left-hand-side private data.
+            </p>
+
+            <img src="fig/app.png" alt="Privacy concerns in AI applications" style="width:100%">
+            <p>
+              <em>Fully Homomorphic Encryption (HE) enables encrypted computation, securing both private data of
+                users and private model of providers. This secures privacy during the entire life cycle but becomes
+                extremely slow.</em>
+            </p>
+
+            <p>
+              HE bridges this gap: data owners encrypt locally, send ciphertexts (which look like random noise) to the
+              untrusted cloud, where AI inference runs entirely on encrypted data. Only the data owner, who holds the
+              decryption key, can recover the meaningful result. The entire pipeline never exposes raw data, and hence
+              securing privacy during the entire life cycle&mdash;but FHE is extremely slow.
+            </p>
+
+            <img src="fig/he_solution.png" alt="HE bridges the privacy gap" style="width:100%">
+
+            <h3 id="fhe-slowness">Reasons for the Slowness of FHE Performance</h3>
+
+            <p>
+              The slowness of HE comes with two reasons &ndash; significant memory and compute overhead. Taking
+              ResNet18 as an example, the encryption of word-level HE schemes such as CKKS increases the memory demand
+              four magnitudes higher and compute demand three magnitudes higher. This overhead makes it
+              10,000&ndash;100,000 times slower and becomes impractical.
+            </p>
+
+            <h4>State-of-the-art Acceleration Works Available on the Market:</h4>
+
+            <p>
+              To enable it to run in reasonable latency, the community is building dedicated hardware and compilers.
+              However, building new hardware and compiler from scratch is expensive:
+            </p>
+
+            <ul>
+              <li><strong>CPU libraries</strong> (OpenFHE, Microsoft SEAL): Mature but limited by core count and DRAM
+                bandwidth.</li>
+              <li><strong>GPU libraries</strong> (TensorFHE, cuFHE, WarpDrive, FIDESlib, FAB, HEAP, Cheddar): Leverage
+                parallelism but 32-bit modular arithmetic maps poorly to GPU ALUs and low-precision tensor cores.</li>
+              <li><strong>FPGA accelerators</strong>: Customizable datapaths but lack the manufacturing scale and memory
+                bandwidth of commodity chips.</li>
+              <li><strong>Custom HE ASICs</strong> (CraterLake, BTS, ARK, SHARP): Promise high performance but require
+                multi-year design cycles, cost hundreds of millions of dollars, and none are commercially available.
+              </li>
+            </ul>
+            <h4>Goal of CROSS:</h4>
+            <p>
+              To make HE immediately available, CROSS provides an alternative, potentially transformative way to use
+              existing AI ASICs to accelerate HE. CROSS is a compiler framework that converts encrypted computation
+              into native kernels accelerated by AI ASICs. This reduces years of development into immediate deployment,
+              and saves millions of dollars in hardware fabrication costs.
+            </p>
+            <img src="fig/ai4fhe.png" alt="AI ASICs for FHE acceleration" style="width:100%">
+
+            <p>
+              <strong>Why AI ASICs?</strong> AI ASICs, such as Google's Tensor Processing Units (TPU), deliver higher
+              throughput and better energy efficiency (performance per watt) than other commodity devices. Across
+              technology nodes, AI ASICs consistently sit on the best energy-efficiency frontier&mdash;enabling more
+              chips to fit within a datacenter's power budget.
+            </p>
+            <img src="fig/energy_efficiency_comparison.png" alt="Energy Efficiency Comparison" style="width:100%">
+
+          </section>
+
+          <!-- TPU Architecture Section -->
+          <section id="tpu-architecture">
+
+            <h3>TPU Microarchitecture Overview</h3>
+
+            <p>
+              With such motivation, let's now see what TPU could do by deeply diving into its architecture. Overall,
+              TPU has massive memory, compute and bandwidth.
+            </p>
+            <img src="fig/tpu_arch.png" alt="TPU microarchitecture overview" style="width:100%">
+
+            <h4>Memory</h4>
+            <p>
+              Different generations of TPU have hundreds of GB HBM. Hundreds of MBs last-level cache. This memory is
+              shared by one or two tensor cores, and therefore we call it common memory, or CMEM. Each tensor core has
+              tens of MB of local scratch pad. They are organized into a vector of 128 lanes. So we call them Vector
+              MEM, or VMEM. Within each lane, there are eight sublanes. Each sublane has a register file with 32 copies
+              of 32-bit registers. This gives 1024 local register files for each tensor core. In total hundreds of KB
+              local registers. This in total gives hundreds of GB off-chip memory and hundreds of MB on-chip memory.
+            </p>
+
+            <h4>Compute</h4>
+            <p>
+              Each sublane has two local ALUs. In total, each tensor core has 2048 ALUs. These ALUs are designed to
+              process vectorized operations (VecOps), and so we call it a VPU. All these 2048 ALUs in VPU work in lock
+              step. And we control them using single instruction, multiple data, or SIMD instructions. This gives 1 to
+              10 TOPs of 32-bit VecOps. Each tensor core also has four dedicated compute engines for matrix
+              multiplication, called MXU. Each MXU is a 128&times;128 systolic array, which is designed to process
+              large matrix multiplication. This gives 100 to 1000 TOPs for 8-bit matrix multiplication. The throughput
+              for low-precision matrix multiplication is about 100&times; higher than high-precision vectorized
+              operations. Therefore, we want to use MXU as much as possible for higher performance.
+            </p>
+
+            <h4>Bandwidth</h4>
+            <p>
+              TPU has massive on-chip bandwidth for fast on-chip data reordering. It also has a dedicated hardware
+              called "cross lane unit" (XLU). XLU supports on-chip data reorganization at VReg granularity.
+            </p>
+
+          </section>
+
+          <!-- Compute and Memory Gap Section -->
+          <section id="compute-memory-gap">
+
+            <h3>Compute and Memory Gap of Using TPUs for HE Acceleration</h3>
+
+            <p>
+              If we put the workload and computation together, then there are clearly compute and memory gaps between
+              what HE requires and what TPUs natively provide.
+            </p>
+            <img src="fig/gap.png" alt="Compute and memory gap between HE and TPU" style="width:100%">
+
+            <p><strong>From the perspective of compute:</strong></p>
+
+            <ul>
+              <li><strong>Modular Reduction Support:</strong> HE requires modular reduction but TPU does not have a
+                dedicated hardware acceleration engine for it.</li>
+              <li><strong>Insufficient precision:</strong> Even with Residue Number System (RNS), HE still requires
+                precision of 28&ndash;59 bit moduli, which is higher than 32-bit vectorized modular arithmetic and
+                8-bit matrix multiplication supported by AI ASICs.</li>
+            </ul>
+            <p><strong>From the perspective of memory:</strong></p>
+
+            <ul>
+              <li><strong>Data reorganization:</strong> Standard NTT algorithms require fine-grained data shuffles and
+                transpose a large-scale tensor with tens of thousands degrees, which are expensive on TPU's memory
+                subsystem. Further, TPU's cross lane unit (XLU) is only optimized for coarse-grained 128&times;8
+                VReg-based data manipulation. Finer-grained data manipulation will underutilize TPU's VReg,
+                introducing extra redundancy. Therefore, we want to eliminate these explicit memory reorganizations.
+              </li>
+            </ul>
+          </section>
+
+          <!-- Key Insight Section -->
+          <section id="key-insight">
+
+            <h3>The Key Insight: Static Scheduling Enables Compile-Time Transformation</h3>
+
+            <p>
+              HE operators have a unique property that distinguishes them from general-purpose computation:
+              <strong>static scheduling of modular arithmetic with pre-known parameters</strong>. Polynomial degrees,
+              moduli, NTT twiddle factors, and key-switching evaluation keys are all known at encryption parameter
+              setup time&mdash;before any ciphertext is processed. Further, HE has a static computation graph. Both
+              enable a significant portion of the modular arithmetic to be partially evaluated at compile time.
+            </p>
+
+            <p>
+              Specifically, CROSS (1) absorbs modular reduction constants and memory permutations into precomputed
+              parameter matrices offline, and then (2) transforms the remaining computation to dense INT8 matrix
+              multiplications and INT32 vectorized shift and addition&mdash;exactly what TPU MXUs, VPUs and XLU could
+              execute at peak efficiency. This turns the TPU into a SotA throughput machine for HE, without any
+              hardware modifications.
+            </p>
+
+          </section>
+
+          <!-- ==================== DESIGN ==================== -->
+
+          <!-- Overview Section -->
+          <section id="overview">
+            <h2>Design Overview</h2>
+
+            <p>
+              CROSS is a JAX-based compiler framework that transforms HE workloads into TPU-native operations. Rather
+              than requiring years of ASIC design, CROSS provides an immediate, zero-hardware-cost path to SotA HE
+              acceleration by leveraging existing Google TPUs.
+            </p>
+
+            <p>
+              To tackle this entire problem structurally, HE acceleration techniques, particularly for CKKS encryption,
+              could be formally categorized into five distinct layers:
+            </p>
+
+            <ol>
+              <li><strong>Packing</strong> defines how data is organized within ciphertext slots. Specifically, a CKKS
+                ciphertext operates like a vector of SIMD units, encoding multiple data per ciphertext and enforcing
+                lock-step operator for all encoded data. Thus, operators in original applications initially designed
+                for element-wise computations must be transformed into SIMD-compatible, HE-specific Privacy-Preserving
+                Operators (PP-Ops).</li>
+              <li><strong>Mapping</strong> translates PP-Ops into sequences of fundamental HE operators. Optimal
+                mapping seeks maximum arithmetic intensity, data reuse, and parallelism while minimizing computational
+                and memory overhead to reduce latency.</li>
+              <li><strong>Scheduling</strong> determines how HE kernels are scheduled for each HE operator (e.g.,
+                addition, multiplication, rotation, rescale, bootstrapping).</li>
+              <li><strong>Decomposing</strong> specifies arithmetic and memory operations on individual ciphertexts for
+                HE kernels.</li>
+              <li><strong>Binding:</strong> Arithmetic and memory operations are translated into hardware-specific
+                programming interfaces (e.g. JAX for TPU), or low-level hardware ISAs (e.g. SIMD ISA for TPU).</li>
+            </ol>
+            <img src="fig/compile_flow.png" alt="The overall compilation flow." style="width:100%">
+            <p>
+              The CROSS library tackles <strong>Scheduling</strong>, <strong>Decomposing</strong> and
+              <strong>Binding</strong>, and provides library HE operators, HE Kernels and Arithmetics functions:
+            </p>
+
+            <ul>
+              <li><strong>HE Operators:</strong> HE-Multiplication (with relinearization), HE-Rotation (with key
+                switching), and HE-Rescale.</li>
+              <li><strong>HE Kernels:</strong> NTT, inverse NTT, basis conversion, and modular arithmetic (Barrett
+                reduction, Montgomery reduction, Shoup's reduction and BAT lazy reduction), all operating on
+                BAT/MAT-transformed parameters.</li>
+              <li><strong>Arithmetics:</strong> Basis Aligned Transformation (BAT) and Memory Aligned Transformation
+                (MAT) restructure HE computations offline to match TPU hardware primitives.</li>
+            </ul>
+            <p>
+              The core of CROSS lies at two transformations <strong>BAT</strong> and <strong>MAT</strong> to tackle
+              compute gap and memory gap, respectively.
+            </p>
+
+            <p>
+              CROSS is integrated into Google's jaxite library for CKKS TPU acceleration and is verified for bit-exact
+              correctness against <a href="https://github.com/openfheorg/openfhe-development"
+                target="_blank">OpenFHE</a>.
+            </p>
+
+          </section>
+
+          <!-- BAT Section -->
+          <section id="bat">
+            <h2>Basis Aligned Transformation (BAT)</h2>
+
+            <p>
+              BAT is the core compile-time transformation that bridges the <strong>compute gap</strong> (modular
+              reduction and high precision requirement). BAT converts high-precision modular matrix-vector products
+              into low-precision (INT8) matrix multiplications and (INT32) vectorized addition, unlocking the TPU MXU.
+            </p>
+
+            <h3 id="bat-problem">Problem</h3>
+
+            <p>
+              HE requires high-precision modular vectorized multiplication (<strong>z</strong>=a&times;b%q) and
+              high-precision modular matrix multiplication (o=W&times;v%q). Both require high precision and modular
+              reduction.
+            </p>
+
+            <p>
+              Both need the same fundamental kernel, i.e., high-precision scalar multiplication. Therefore, we
+              formulate the problem as "how to offload the high-precision parts and modular reduction part of
+              high-precision scalar multiplication to compile time, and then transform the remaining operations into
+              kernels that TPUs are good at".
+            </p>
+
+            <h3 id="bat-approach">Approach</h3>
+
+            <h4>Overview</h4>
+            <p>
+              Let's take a single pair of high-precision scalar multiplication z=a0&times;b0%q. BAT exploits the fact
+              that a0 and q are pre-known at parameter setup time, and it could partially compute the
+              z=a0&times;b0%q, only leaving the 8-bit matrix multiplication and 32-bit vectorized shift and addition
+              in the runtime.
+            </p>
+
+            <p>
+              <strong>Offline (compile-time):</strong> The key insight is that the modular reduction of high-order
+              byte contributions&mdash;the expensive part&mdash;is absorbed into the weight matrix itself. This moves
+              the "temporary result computation to offline."
+            </p>
+
+            <p>
+              <strong>Online (runtime):</strong> Each 32-bit input element is bitcast to 4 uint8 bytes. The modular
+              matrix-vector product becomes four INT8 matrix multiplications (one per byte position), accumulated with
+              byte-aligned shifts. Each INT8 MatMul maps directly to a single TPU MXU operation. A final Barrett
+              reduction brings the accumulated result back to the modular domain.
+            </p>
+
+            <img src="fig/detail_s1.png" alt="BAT overview: offline and online phases" style="width:100%">
+
+            <h4>Lower Scalar Multiplication as Low-Precision Chunk-wise Multiplication</h4>
+            <p>
+              For multiplying two 32-bit values: each 32-bit input can be decomposed into four 8-bit chunks. We use
+              superscripts to mark chunk indices, e.g. a<sup>(3)</sup> as the most significant byte. The product is a
+              64-bit result, which we eventually reduce back to 32 bits through modular reduction. And such temporal
+              64-bit results would be decomposed into eight 8-bit chunks.
+            </p>
+
+            <p>
+              Once decomposed, the original 32-bit multiplication turns into an all-to-all set of 8-bit
+              multiplications across these chunks. It takes 16 multiplications to generate chunk-wise products and
+              then accumulate them back to c. From the rightmost to the leftmost, the basis keeps increasing.
+            </p>
+
+            <img src="fig/detail_s2.png" alt="Chunk-wise multiplication decomposition" style="width:100%">
+            <p>
+              The state-of-the-art GPU library schedules chunk-wise multiplications as a sparse matrix multiplication.
+              Each row of the left matrix corresponds to a partial sum in the final result. These partial sums are
+              then left-shifted and accumulated to form c. Now, notice the structure: the left matrix is a Toeplitz
+              matrix of a. But half of its entries are zeros&mdash;which means half of the computations are redundant.
+            </p>
+
+            <img src="fig/detail_s3.png" alt="Sparse to dense MatMul via BAT" style="width:100%">
+            <p>
+              To reduce such redundancy, we propose <strong>Basis Aligned Transformation (BAT)</strong>. BAT
+              eliminates the redundancy in sparse MatMul and converts it into a smaller dense MatMul. The idea behind
+              BAT comes from a simple observation: Block 2 in the multiplication only contributes to temporary partial
+              sums. These generated partial sums are left shifted and accumulated into a 64-bit result, which is later
+              reduced modulo q back to 32 bits. That means the upper 32-bit part is only temporary. In other words,
+              Block 2 in the left matrix contributes only to this temporary part, which will eventually feed into
+              Block 1.
+            </p>
+
+            <p>
+              Therefore, BAT lowers the Basis of Block 2 and fuses them into Block 1 offline. We group
+              a<sup>(3)</sup> &lt;&lt; 48 together, then insert a modulo q operation and compute it offline. The
+              result is smaller than q, and less than 32 bits. Let's call this reduced value r. Finally, r can be
+              decomposed into four 8-bit chunks, with its basis aligned back within 32 bits.
+            </p>
+
+            <img src="fig/detail_s4.png" alt="BAT basis lowering and fusion" style="width:100%">
+            <p>
+              We could eliminate a<sup>(3)</sup> in Block 2 and add the decomposed chunks of r into Block 1. This
+              effectively aligns the basis of values in Block 2 below 32 bits, and therefore we call it as
+              <strong>Basis Aligned Transformation</strong>. Further, we could repeatedly apply BAT to all elements
+              in Block 2 to fuse them back to Block 1 offline. This generates a smaller dense matrix multiplication,
+              giving <strong>2&times; speedup</strong>.
+            </p>
+
+            <img src="fig/detail_s5.png" alt="BAT dense MatMul with 2x speedup" style="width:100%">
+            <p>
+              This lowers one 32-bit scalar multiplication into a low-precision INT8 K&times;K&times;1 matrix vector
+              multiplication.
+            </p>
+
+            <h4 id="bat-lazy">Lazy Modular Reduction in BAT</h4>
+            <p>
+              By utilizing <strong>Lazy Reduction</strong>, we can significantly lower the computational cost of
+              maintaining bit-precision. After the initial operation c0=BAT(a0)&times;b0, we must perform a modular
+              reduction to transform the temporal result c0 into the final value z0 = c0 mod q.
+            </p>
+            <img src="fig/red_s1.png" alt="BAT Lazy Modular Reduction Step 1" style="width:100%">
+
+            <p>
+              A K&times;K&times;1 matrix-vector multiplication involving K bytes produces partial sums. Traditionally,
+              these are shifted by their corresponding bases, accumulated into a high-precision result (e.g., 49-bit),
+              and then subjected to a <strong>Full Modular Reduction</strong> to ensure the result is &le;q. However,
+              full reduction is computationally expensive.
+            </p>
+
+            <p>
+              Instead of forcing every intermediate step to be &le;q, we propose <strong>BAT Lazy Reduction</strong>.
+              This approach allows intermediate values to exceed q as long as they stay within a 32-bit machine word,
+              and then use BAT to offload the runtime modulo q to compile time. This eliminates the need for frequent,
+              expensive division or complex modulo operations.
+            </p>
+            <img src="fig/red_s2.png" alt="BAT Lazy Modular Reduction Step 2" style="width:100%">
+
+
+            <h4>Bit-Level Optimization</h4>
+            <p>
+              Our goal is to bring high-precision bits down to a 32-bit boundary rather than strictly &le;q. We treat
+              the lower and upper bytes differently:
+            </p>
+
+            <ul>
+              <li><strong>Lower 32 bits (c<sup>(0)</sup>&ndash;c<sup>(3)</sup>):</strong> These bytes are kept intact.
+                They are shifted by their respective bases and merged directly.</li>
+              <li><strong>High-Overflow bits (c<sup>(4)</sup>&ndash;c<sup>(5)</sup>):</strong> These bytes exceed the
+                32-bit threshold and require explicit reduction.</li>
+            </ul>
+            <p>
+              For c<sup>(4)</sup> and c<sup>(5)</sup>, we represent each with their binary representation and then
+              apply BAT to preprocess (basis mod q) as log2&nbsp;q-bit coefficient in compile time:
+            </p>
+
+            <ol>
+              <li><strong>Binary View:</strong> For c<sup>(4)</sup> and c<sup>(5)</sup> that overflow 32 bits, we
+                first represent both into binary form. Then each bit needs to be shifted by respective basis and then
+                modulo q, i.e. (&times; 2<sup>k</sup> mod q).</li>
+              <li><strong>BAT Preprocessing:</strong> The value of 2<sup>k</sup> and q are both known ahead of program
+                execution. Therefore, we could preprocess (2<sup>k</sup> mod q) in compile time, and then store the
+                results as log2&nbsp;q-bit coefficients.</li>
+              <li><strong>Runtime Accumulation:</strong> At runtime, we simply sum the pre-computed coefficients for
+                every bit in c<sup>(4)</sup> and c<sup>(5)</sup> that is set to 1.</li>
+              <li><strong>Result:</strong> This transforms a complex modular reduction into a simple sequence of
+                <strong>shifts and additions</strong>.
+              </li>
+            </ol>
+
+            <h4>Precision &amp; Overflow Safety</h4>
+            <p>
+              Lazy reduction of c<sup>(4)</sup> and c<sup>(5)</sup> involves accumulating up to 16 pre-computed
+              log2&nbsp;q-bit values. This adds at most log2(16) = 4 bits of precision. Therefore, the upper threshold
+              for any intermediate value is (log2&nbsp;q + 4) bits. To ensure zero overflow on a standard 32-bit machine
+              word:
+            </p>
+
+            <ul>
+              <li><strong>Recommended:</strong> log2&nbsp;q &le; 28 bits.</li>
+              <li><strong>Experimental:</strong> Testing confirms that log2&nbsp;q = 29 bits also functions correctly
+                without overflow in standard workloads.</li>
+            </ul>
+
+            <h3 id="bat-why">Why BAT Works</h3>
+
+            <p>
+              Because the moduli are static, the expensive part of modular reduction&mdash;computing how each byte
+              position wraps around mod q&mdash;is done offline in compile time. The online path sees only dense INT8
+              MatMul that TPU's MXU excels at, and INT32 VecAdd and VecShift that TPU's VPU excels at. This
+              effectively utilizes the TPU's high-throughput compute engine to accelerate the HE kernels, inheriting
+              the high throughput for HE. BAT removes all redundant zero entries from the prior SotA GPU's
+              sparse-matrix approach, achieving up to <strong>2&times; speedup</strong>.
+            </p>
+
+            <h3 id="bat-example">Example: Applying BAT for High-Precision Modular Matrix Multiplication</h3>
+
+            <p>
+              Without CROSS, on TPU, both high-precision modular arithmetic runs on the VPU at ~O(10) TOPS. The MXU
+              provides ~O(100) TOPS but only for INT8 operations&mdash;a 100&times; throughput gap. BAT lowers a
+              high-precision MatModMul into a low-precision MatModMul: each H&times;V&times;W high-precision MatMul
+              becomes KH&times;KV&times;W INT8 MatMuls, directly executable on TPU MXU.
+            </p>
+            <img src="fig/MatModMul.png" alt="Applying BAT High-precision modular matrix multiplication"
+              style="width:100%">
+
+            <p>
+              <strong>Code Reference:</strong> See the function <code>basis_aligned_transformation</code> in the file
+              <code>CROSS/jaxite_word/ntt_mm.py</code>.
+            </p>
+
+          </section>
+
+          <!-- MAT Section -->
+          <section id="mat">
+            <h2>Memory Aligned Transformation (MAT)</h2>
+
+            <p>
+              MAT is the second compile-time transformation that bridges the <strong>data reorganization gap</strong>.
+              MAT eliminates runtime data permutations (transpose and shuffling) by embedding reordering into
+              pre-known parameter matrices offline.
+            </p>
+
+            <h3 id="mat-problem">Problem</h3>
+
+            <p>
+              In a standard matrix multiplication workflow, a parameter matrix P is multiplied with an input vector to
+              generate a temporal result, which must then be transposed or shuffled. This explicit reordering has
+              significant memory overhead on TPU.
+            </p>
+
+            <h3 id="mat-approach">Approach</h3>
+
+            <h4>Example 1: Transposed Matrix Multiplication</h4>
+            <p>
+              A pre-known parameter matrix P will be multiplied with the input matrix to generate a temporal result,
+              which is further transposed to obtain the final results. To eliminate this overhead, Memory Aligned
+              Transformation (MAT) embeds data transposition into computation. By leveraging linear algebra properties,
+              CROSS swaps the order of parameter P and input matrix, and then transposes both of them offline. This
+              multiplication directly generates the result in the expected order, completely removing the need for an
+              explicit transposition.
+            </p>
+            <img src="fig/transpose_matmul.png" alt="MAT removes the transpose in MatMul">
+
+            <h4>Example 2: Shuffled Matrix Vector Multiplication</h4>
+            <p>
+              In this example, you multiply first and shuffle later, which has explicit shuffling overhead. Because
+              parameters are pre-known, MAT shuffles the rows of the parameter matrix offline so that the matrix
+              multiplication directly produces the result in the correct order&mdash;no runtime shuffling is needed.
+            </p>
+            <img src="fig/shuffle_matmul.png" alt="MAT removes the shuffle in MatMul">
+
+            <p>
+              For the NTT, MAT applies bit-reversal permutations to twiddle factor matrix rows and columns offline.
+              For HE-Rotation, MAT decomposes <strong>a subset pattern of</strong> 1D automorphism permutation (which
+              would require an O(N) gather) into separate row and column permutations on the 2D matrix layout,
+              reducing memory footprint to O(&radic;N).
+            </p>
+
+            <h3 id="mat-ntt">Example: Applying MAT for NTT</h3>
+
+            <p>
+              The NTT is the most performance-critical kernel in the CKKS scheme. CROSS applies MAT to optimize a
+              4-step algorithm into a <strong>3-step layout invariant NTT algorithm</strong>.
+            </p>
+
+            <h4>Baseline 4-Step NTT Algorithm</h4>
+            <p>
+              The coefficients of the input polynomial of length N are reshaped into an R&times;C matrix where
+              N = R&times;C, which will then go through 4 consecutive steps:
+            </p>
+
+            <ul>
+              <li><strong>Step 1:</strong> Each column of the matrix needs to go through an NTT of size R.</li>
+              <li><strong>Step 2:</strong> The result is then <strong>transposed</strong> from R&times;C into
+                C&times;R.</li>
+              <li><strong>Step 3:</strong> It goes through element-wise multiplication, to generate this C&times;R
+                matrix. Now each row in the original matrix becomes a column here.</li>
+              <li><strong>Step 4:</strong> We need to perform row-wise NTT, which is also computed by multiplying the
+                coefficient matrix with twiddle factors.</li>
+              <li>Finally, the result of this step needs to be <strong>bit-reversed</strong> into the final results.
+              </li>
+            </ul>
+            <p>
+              This incurs explicit transpose and bit-reverse permutation costs.
+            </p>
+
+            <img src="fig/ntt.png"
+              alt="How MAT could remove transposition and bit-reverse shuffling of 4-step NTT, ensuring a layout-invariant NTT algorithm."
+              style="width:100%">
+
+            <h4>Optimized 3-Step Layout-Invariant NTT</h4>
+            <p>
+              In order to remove the explicit data layout reordering:
+            </p>
+
+            <ul>
+              <li>To remove the transpose, MAT transposes the parameters of all following steps, such that data are
+                stored consistently in the original row-major layout.</li>
+              <li>To remove the bit-reverse, both two parameter matrices in step 1 and step 3 are permuted such that
+                the computation directly generates results in the expected order.</li>
+            </ul>
+            <p>
+              This completely gets rid of the explicit memory overhead, producing a <strong>layout-invariant</strong>
+              3-step NTT algorithm:
+            </p>
+
+            <ol>
+              <li><strong>Step 1 (Column NTT):</strong> Multiply an R&times;R twiddle factor matrix against each
+                column group.</li>
+              <li><strong>Step 2 (Elementwise multiply):</strong> Pointwise modular multiplication by C&times;R
+                cross-term twiddle factors.</li>
+              <li><strong>Step 3 (Row NTT):</strong> Multiply a C&times;C twiddle factor matrix against each row
+                group.</li>
+            </ol>
+            <p>
+              <strong>Code Reference:</strong> See the function <code>memory_aligned_transformation</code> in the file
+              <code>CROSS/jaxite_word/ntt_mm.py</code>.
+            </p>
+
+          </section>
+
+          <!-- Modular Reduction Section -->
+          <section id="modular-reduction">
+            <h2>Modular Reduction</h2>
+
+            <p>
+              CROSS supports four modular reduction strategies. The choice of strategy interacts with BAT
+              compatibility:
+            </p>
+
+            <ul>
+              <li><strong>Barrett reduction (default):</strong> Division-free reduction using precomputed constants.
+                Compatible with BAT. Used for all production paths.</li>
+              <li><strong>Montgomery reduction:</strong> Supported but not default&mdash;domain conversion overhead is
+                not justified when BAT already eliminates the modular multiplication bottleneck.</li>
+              <li><strong>Shoup reduction:</strong> Supported for reference&mdash;fundamentally incompatible with BAT
+                because Shoup requires a precomputed partner per operand, which conflicts with BAT's byte
+                decomposition.</li>
+              <li><strong>BAT-lazy reduction:</strong> Fuses the reduction into the BAT computation as a small
+                matrix-vector product, reducing the number of separate reduction passes.</li>
+            </ul>
+            <p>
+              <strong>Code Reference:</strong> See the classes <code>MontgomeryContext</code>,
+              <code>BarrettContext</code>, <code>ShoupContext</code>, and <code>BATLazyContext</code> in the file
+              <code>CROSS/jaxite_word/finite_field.py</code>. The usage of different modular reduction algorithms can
+              be found in <code>CROSS/jaxite_word/finite_field_test.py</code>.
+            </p>
+
+          </section>
+
+          <!-- HE Operators Section -->
+          <section id="he-operators">
+            <h2>HE Operators</h2>
+
+            <p>
+              CROSS implements the CKKS operators (HE Multiplication, HE Rotation, HE Rescale, HE Addition), and
+              provides performance estimation for the bootstrapping operator (HE Bootstrapping). CROSS adopts the
+              HYBRID key-switching variant. Each operator composes multiple HE kernels, including NTT, basis
+              conversion, and modular arithmetic kernels.
+            </p>
+
+            <h3 id="he-multiplication">HE-Multiplication</h3>
+
+            <p>
+              CKKS multiplication takes two ciphertexts and produces one result through five stages: rescale &rarr;
+              polynomial multiplication &rarr; key switch &rarr; approximate modulus down &rarr; addition. The
+              key-switching step dominates latency and involves HYBRID decomposition, basis conversion from Q-basis
+              to the extended Q&cup;P-basis, NTT, and evaluation key multiplication.
+            </p>
+
+            <p>
+              HE multiplication is not a single step; it involves a sequence of stages to maintain the ciphertext's
+              integrity and manage noise:
+            </p>
+
+            <ol>
+              <li><strong>Rescale:</strong> Adjusts the scale of the fixed-point numbers after multiplication.</li>
+              <li><strong>Polynomial Multiplication:</strong> Multiplies the polynomials, which temporarily increases
+                the number of elements (from 2 elements to 3).</li>
+              <li><strong>Key Switch (Relinearization):</strong> Converts the 3-element result back into a standard
+                2-element ciphertext.</li>
+              <li><strong>Basis Conversion (Modulus Down):</strong> Lowers the modulus to manage noise growth.</li>
+              <li><strong>Addition.</strong></li>
+            </ol>
+            <img src="fig/image7.png" alt="HE Multiplication Flow">
+
+            <h3 id="he-rotation">HE-Rotation</h3>
+
+            <p>
+              Rotation permutes encrypted slot values via automorphism. The pipeline mirrors multiplication's
+              key-switching stage: INTT &rarr; basis conversion &rarr; NTT &rarr; evaluation key multiplication
+              &rarr; approximate modulus down &rarr; automorphism permutation. MAT's 2D decomposition of the
+              automorphism permutation is applied in the final step.
+            </p>
+
+            <img src="fig/image10.png" alt="HE Rotation Flow">
+
+            <h3 id="he-rescale">HE-Rescale</h3>
+
+            <p>
+              Rescaling drops the last RNS modulus to reduce the ciphertext level after multiplication, composing
+              INTT, centered lift, scaling, and NTT on the extracted limb.
+            </p>
+
+            <h3 id="basis-conversion">Basis Conversion</h3>
+
+            <p>
+              Basis conversion (BConv) changes a polynomial's RNS representation between moduli sets. The cross-basis
+              linear combination is a matrix-vector product, which BAT transforms into INT8 matmuls&mdash;the second
+              major application of BAT beyond NTT.
+            </p>
+
+            <p>
+              The conversion is broken into two steps:
+            </p>
+
+            <ul>
+              <li><strong>Step 1:</strong> b<sub>n,i</sub> = [ a<sub>n,i</sub> &middot; q&#770;<sub>i</sub><sup>-1</sup>
+                ]<sub>q<sub>i</sub></sub> for 0 &le; i &lt; L and 0 &le; n &lt; N. This invokes <strong>L
+                  independent instances</strong> of <strong>N-length Vectorized Modular Multiplication</strong>.</li>
+              <li><strong>Step 2:</strong> c<sub>n,j</sub> = (&Sigma;<sub>i=0</sub><sup>L-1</sup> b<sub>n,i</sub>
+                &middot; [q<sub>i</sub>*]<sub>p<sub>j</sub></sub>) mod p<sub>j</sub>. This invokes one
+                <strong>Modular Matrix Multiplication</strong>: M<sub>N&times;L'</sub> = M<sub>N&times;L</sub> &middot;
+                M<sub>L&times;L'</sub>.
+              </li>
+            </ul>
+          </section>
+
+
+          <!-- Citation Section -->
+          <section id="citation" class="citation-section">
+            <h2>Citation</h2>
+
+            <p>If you find this tutorial helpful, feel free to:</p>
+
+            <ul>
+              <li>Star CROSS repo at <a
+                  href="https://github.com/EfficientPPML/CROSS">https://github.com/EfficientPPML/CROSS</a></li>
+              <li>Cite our paper with biblatex below:</li>
+            </ul>
+            <pre><code>@inproceedings{tong2025CROSS,
+author = {Jianming Tong and Tianhao Huang and Jingtian Dang and Leo de Castro and Anirudh Itagi and Anupam
+Golder and Asra Ali and Jevin Jiang and Jeremy Kun and Arvind and G. Edward Suh and Tushar Krishna},
+title = {Leveraging ASIC AI Chips for Homomorphic Encryption},
+year = {2026},
+publisher = {2026 IEEE International Symposium on High Performance Computer Architecture (HPCA)},
+address = {Australia},
+keywords = {AI ASICs, TPU, Fully Homomorphic Encryption},
+location = {Australia},
+series = {HPCA'26} }</code></pre>
+          </section>
+
+        </article>
+
+        <aside class="on-this-page">
+          <h4>On this page</h4>
+          <ul>
+            <li><a href="#objective">Objective</a></li>
+            <li><a href="#background">Background</a></li>
+            <li><a href="#ai-revolution" class="toc-h3">AI Revolution</a></li>
+            <li><a href="#privacy-concerns" class="toc-h3">Privacy Concerns</a></li>
+            <li><a href="#fhe-slowness" class="toc-h3">FHE Slowness</a></li>
+            <li><a href="#tpu-architecture" class="toc-h3">TPU Architecture</a></li>
+            <li><a href="#compute-memory-gap" class="toc-h3">Compute/Memory Gap</a></li>
+            <li><a href="#key-insight" class="toc-h3">Key Insight</a></li>
+            <li><a href="#overview">Design Overview</a></li>
+            <li><a href="#bat">BAT</a></li>
+            <li><a href="#bat-problem" class="toc-h3">Problem</a></li>
+            <li><a href="#bat-approach" class="toc-h3">Approach</a></li>
+            <li><a href="#bat-why" class="toc-h3">Why BAT Works</a></li>
+            <li><a href="#bat-example" class="toc-h3">BAT Example</a></li>
+            <li><a href="#mat">MAT</a></li>
+            <li><a href="#mat-problem" class="toc-h3">Problem</a></li>
+            <li><a href="#mat-approach" class="toc-h3">Approach</a></li>
+            <li><a href="#mat-ntt" class="toc-h3">MAT for NTT</a></li>
+            <li><a href="#modular-reduction">Modular Reduction</a></li>
+            <li><a href="#he-operators">HE Operators</a></li>
+            <li><a href="#he-multiplication" class="toc-h3">HE-Multiplication</a></li>
+            <li><a href="#he-rotation" class="toc-h3">HE-Rotation</a></li>
+            <li><a href="#he-rescale" class="toc-h3">HE-Rescale</a></li>
+            <li><a href="#basis-conversion" class="toc-h3">Basis Conversion</a></li>
+            <li><a href="#quality">Quality Attributes</a></li>
+            <li><a href="#security" class="toc-h3">Security</a></li>
+            <li><a href="#correctness" class="toc-h3">Correctness</a></li>
+            <li><a href="#performance" class="toc-h3">Performance</a></li>
+            <li><a href="#citation">Citation</a></li>
+          </ul>
+        </aside>
+      </div>
+
+      <footer class="site-footer">
+        <p>&copy; 2026 Cryptography Primitives Acceleration Tutorial.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

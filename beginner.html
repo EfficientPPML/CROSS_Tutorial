@@ -44,6 +44,7 @@
           <h3 class="nav-title">docs</h3>
           <ul class="nav-links">
             <li><a href="beginner.html" class="active">Easy HE Background</a></li>
+            <li><a href="cross.html">CROSS</a></li>
             <li><a href="tpu.html">TPU Novice to Master</a></li>
             <li><a href="ntt.html">NTT Algorithms</a></li>
             <li><a href="open_challenge.html">Open Challenge</a></li>
@@ -258,33 +259,6 @@
           </section>
 
 
-          <section id="computational-flow">
-            <h2>Chapter 4: Detailed Computational Flow</h2>
-            <p>HE operators require complex sequences of kernels to manage the mathematical properties of the
-              ciphertext.</p>
-
-            <h3>HE Multiplication</h3>
-            <p>HE multiplication is not a single step; it involves a sequence of four stages to maintain the
-              ciphertext's integrity and manage noise:</p>
-            <ol>
-              <li><strong>Rescale:</strong> Adjusts the scale of the fixed-point numbers after multiplication.</li>
-              <li><strong>Ciphertext Multiplication:</strong> Multiplies the polynomials, which temporarily increases
-                the number of elements (from 2 elements to 3).</li>
-              <li><strong>Key Switch (Relinearization):</strong> Converts the 3-element result back into a standard
-                2-element ciphertext.</li>
-              <li><strong>Basis Conversion (Modulus Down):</strong> Lowers the modulus to manage noise growth.</li>
-            </ol>
-            <img src="fig/image7.png" alt="HE Multiplication Flow">
-
-            <h3>HE Rotation</h3>
-            <p>
-              HE Rotation moves all data in the slots in the same direction with the same distance. This requires a
-              specialized procedure involving <strong>Digit Decomposition</strong>, a <strong>KeySwitch Core</strong>,
-              and finally <strong>AutoMorphism</strong> (Degree-wise Shuffling) to physically move the data within the
-              polynomial structure.
-            </p>
-            <img src="fig/image10.png" alt="HE Rotation Flow">
-          </section>
 
           <!-- Citation Section -->
           <section id="citation" class="citation-section">
