@@ -149,6 +149,35 @@
             </div>
           </section>
 
+          <!-- Keynote Speaker Section -->
+          <section id="keynote">
+            <h2>Keynote Speaker</h2>
+            <div class="keynote-card">
+              <div class="keynote-header">
+                <div class="keynote-photo">
+                  <img src="fig/craig_gentry.jpg" alt="Craig Gentry">
+                </div>
+                <div class="keynote-intro">
+                  <h3><a href="https://en.wikipedia.org/wiki/Craig_Gentry_(computer_scientist)" target="_blank">Craig Gentry</a></h3>
+                  <p class="keynote-affiliation">Chief Scientist, Cornami</p>
+                  <p class="keynote-bio">Craig Gentry is known for constructing the first fully homomorphic encryption scheme in 2009, resolving a central open problem in cryptography. His subsequent work has focused on improving the efficiency of FHE and related cryptographic primitives including obfuscation and multilinear maps. He received the <strong>ACM Grace Murray Hopper Award</strong> and the <strong>Gödel Prize</strong> for his work on FHE.</p>
+                </div>
+              </div>
+              <div class="keynote-talk">
+                <h4>Practical FHE: Three Questions for the Architecture Community</h4>
+                <div class="keynote-abstract">
+                  <p>Fully homomorphic encryption allows arbitrary computation on encrypted data without relying on trusted hardware &mdash; a property that becomes increasingly valuable as AI drives sensitive computation onto outsourced infrastructure. This talk examines three questions that arise naturally when the architecture community turns its attention to FHE:</p>
+                  <ul>
+                    <li><strong>How bad is the overhead?</strong> Perhaps less than you think. For matrix multiplication &mdash; the operation dominating transformer inference &mdash; recent "inside-out" techniques reduce encrypted MM to a small constant number of unencrypted matrix multiplications, allowing use of standard optimized routines (cuBLAS, MXU kernels, etc.).</li>
+                    <li><strong>What should hardware target?</strong> FHE workloads are fully deterministic, streaming-friendly, and built on structured algebra &mdash; excellent properties for hardware acceleration. But perhaps the safest bets are on FHE's invariant structural properties, not on whichever operation happens to be the current bottleneck.</li>
+                    <li><strong>Is this even an ASIC problem?</strong> Commodity GPUs and TPUs already provide strong baselines. While ASICs can accelerate FHE computation, Amdahl's Law limits overall speedup when data movement and memory bandwidth are also significant factors.</li>
+                  </ul>
+                  <p>The talk concludes by asking why FHE is not ubiquitous despite growing demand, and argues that algorithms, hardware, and systems need modular interfaces across the full stack that let each layer advance without breaking the others.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <!-- Schedule Section -->
           <section id="schedule">
             <h2>Agenda (Mar 22, 2026, ASPLOS'26)</h2>
@@ -407,6 +436,7 @@ url={https://arxiv.org/abs/2508.11095},
           <ul>
             <li><a href="#abstract">Abstract</a></li>
             <li><a href="#resources">Resources</a></li>
+            <li><a href="#keynote">Keynote</a></li>
             <li><a href="#schedule">Schedule</a></li>
             <li><a href="#organizers">Organizers</a></li>
             <li><a href="#citation">Citation</a></li>

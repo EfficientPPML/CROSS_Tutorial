@@ -399,6 +399,133 @@ section:last-child {
 }
 
 
+/* Keynote Speaker */
+.keynote-card {
+  margin-top: 32px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  transition: box-shadow 0.3s ease;
+}
+
+.keynote-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.keynote-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.keynote-photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 4px solid var(--bg-card);
+  box-shadow: var(--shadow-md), 0 0 0 2px var(--border-color);
+  background: linear-gradient(135deg, var(--bg-sidebar), var(--border-color));
+}
+
+.keynote-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Override .doc-content img defaults */
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+
+.keynote-intro h3 {
+  font-size: 1.6rem;
+  margin-bottom: 4px;
+}
+
+.keynote-intro h3 a {
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.keynote-intro h3 a:hover {
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.keynote-affiliation {
+  color: var(--primary-color);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.keynote-bio {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.keynote-talk {
+  border-top: 1px dashed var(--border-color);
+  padding-top: 24px;
+}
+
+.keynote-talk h4 {
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.keynote-abstract p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.keynote-abstract ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 16px;
+}
+
+.keynote-abstract li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.keynote-abstract li::before {
+  content: '•';
+  color: var(--primary-color);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .keynote-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .keynote-card {
+    padding: 24px;
+  }
+}
+
 /* Timeline / Schedule */
 .timeline {
   margin-top: 32px;
